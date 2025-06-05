@@ -34,9 +34,9 @@ const Index = () => {
         </div>
 
         <div className="flex justify-center mb-16">
-          <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl">
+          <div className="grid md:grid-cols-2 gap-6 w-full max-w-4xl">
             {/* FEMA Staff Interface */}
-            <Card className="flex-1 hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200">
+            <Card className="flex flex-col hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200">
               <CardHeader className="bg-blue-600 text-white rounded-t-lg">
                 <CardTitle className="flex items-center space-x-3 text-xl">
                   <Settings className="h-6 w-6" />
@@ -46,8 +46,8 @@ const Index = () => {
                   Configure disaster parameters and manage assistance programs
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4 mb-6">
+              <CardContent className="p-6 flex-1 flex flex-col">
+                <div className="space-y-4 mb-6 flex-1">
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                     <p className="text-gray-600">Establish eligibility criteria & program guidance</p>
@@ -71,7 +71,7 @@ const Index = () => {
             </Card>
 
             {/* Survivor Application Interface */}
-            <Card className="flex-1 hover:shadow-xl transition-all duration-300 border-2 hover:border-green-200">
+            <Card className="flex flex-col hover:shadow-xl transition-all duration-300 border-2 hover:border-green-200">
               <CardHeader className="bg-green-600 text-white rounded-t-lg">
                 <CardTitle className="flex items-center space-x-3 text-xl">
                   <Users className="h-6 w-6" />
@@ -81,8 +81,8 @@ const Index = () => {
                   Submit your disaster assistance application
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4 mb-6">
+              <CardContent className="p-6 flex-1 flex flex-col">
+                <div className="space-y-4 mb-6 flex-1">
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                     <p className="text-gray-600">Mobile-friendly application across all channels</p>
