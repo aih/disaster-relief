@@ -6,6 +6,9 @@ import StaffHeader from "@/components/staff/StaffHeader";
 import ActiveDisasters from "@/components/staff/ActiveDisasters";
 import ConfigureDisaster from "@/components/staff/ConfigureDisaster";
 import PolicyManagement from "@/components/staff/PolicyManagement";
+import CaseManagement from "@/components/staff/CaseManagement";
+import VerificationWorkflow from "@/components/staff/VerificationWorkflow";
+import DocumentProcessing from "@/components/staff/DocumentProcessing";
 
 const StaffDashboard = () => {
   const { toast } = useToast();
@@ -28,10 +31,13 @@ const StaffDashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="disasters" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="disasters">Active Disasters</TabsTrigger>
             <TabsTrigger value="configure">Configure New Disaster</TabsTrigger>
             <TabsTrigger value="policies">Policy Management</TabsTrigger>
+            <TabsTrigger value="cases">Case Management</TabsTrigger>
+            <TabsTrigger value="verification">Verification</TabsTrigger>
+            <TabsTrigger value="documents">Documents</TabsTrigger>
           </TabsList>
 
           <TabsContent value="disasters">
@@ -44,6 +50,18 @@ const StaffDashboard = () => {
 
           <TabsContent value="policies">
             <PolicyManagement />
+          </TabsContent>
+
+          <TabsContent value="cases">
+            <CaseManagement />
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <VerificationWorkflow />
+          </TabsContent>
+
+          <TabsContent value="documents">
+            <DocumentProcessing />
           </TabsContent>
         </Tabs>
       </div>
