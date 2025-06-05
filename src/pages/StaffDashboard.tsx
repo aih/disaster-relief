@@ -92,7 +92,12 @@ const StaffDashboard = () => {
                           <p className="text-2xl font-bold text-blue-600">{disaster.applicants.toLocaleString()}</p>
                           <p className="text-sm text-gray-500">Applicants</p>
                         </div>
-                        <Button className="ml-4">Manage</Button>
+                        <Button 
+                          className="ml-4"
+                          onClick={() => navigate(`/disaster-management/${disaster.id}`)}
+                        >
+                          Manage
+                        </Button>
                       </div>
                     </div>
                   ))}
@@ -252,7 +257,13 @@ const StaffDashboard = () => {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-green-600 font-medium">Ready to Deploy</span>
                       <div className="space-x-2">
-                        <Button size="sm" variant="outline">Review Changes</Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => navigate('/policy-review/POL-2024-001')}
+                        >
+                          Review Changes
+                        </Button>
                         <Button size="sm" className="bg-blue-600 hover:bg-blue-700">Deploy</Button>
                       </div>
                     </div>
@@ -266,7 +277,13 @@ const StaffDashboard = () => {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-orange-600 font-medium">Pending Review</span>
                       <div className="space-x-2">
-                        <Button size="sm" variant="outline">Edit Policy</Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => navigate('/policy-edit/POL-2024-002')}
+                        >
+                          Edit Policy
+                        </Button>
                         <Button size="sm" variant="outline">Submit for Approval</Button>
                       </div>
                     </div>

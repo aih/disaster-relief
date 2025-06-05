@@ -33,80 +33,82 @@ const Index = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* FEMA Staff Interface */}
-          <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200">
-            <CardHeader className="bg-blue-600 text-white rounded-t-lg">
-              <CardTitle className="flex items-center space-x-3 text-xl">
-                <Settings className="h-6 w-6" />
-                <span>FEMA Staff Dashboard</span>
-              </CardTitle>
-              <CardDescription className="text-blue-100">
-                Configure disaster parameters and manage assistance programs
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4 mb-6">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                  <p className="text-gray-600">Establish eligibility criteria & program guidance</p>
+        <div className="flex justify-center mb-16">
+          <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl">
+            {/* FEMA Staff Interface */}
+            <Card className="flex-1 hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200">
+              <CardHeader className="bg-blue-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center space-x-3 text-xl">
+                  <Settings className="h-6 w-6" />
+                  <span>FEMA Staff Dashboard</span>
+                </CardTitle>
+                <CardDescription className="text-blue-100">
+                  Configure disaster parameters and manage assistance programs
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                    <p className="text-gray-600">Establish eligibility criteria & program guidance</p>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                    <p className="text-gray-600">Adjust disaster criteria with minimal operational impact</p>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                    <p className="text-gray-600">Automated policy change implementation</p>
+                  </div>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                  <p className="text-gray-600">Adjust disaster criteria with minimal operational impact</p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                  <p className="text-gray-600">Automated policy change implementation</p>
-                </div>
-              </div>
-              <Button 
-                onClick={() => navigate('/staff-dashboard')}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
-              >
-                Access Staff Dashboard
-              </Button>
-            </CardContent>
-          </Card>
+                <Button 
+                  onClick={() => navigate('/staff-dashboard')}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
+                >
+                  Access Staff Dashboard
+                </Button>
+              </CardContent>
+            </Card>
 
-          {/* Survivor Application Interface */}
-          <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-green-200">
-            <CardHeader className="bg-green-600 text-white rounded-t-lg">
-              <CardTitle className="flex items-center space-x-3 text-xl">
-                <Users className="h-6 w-6" />
-                <span>Apply for Assistance</span>
-              </CardTitle>
-              <CardDescription className="text-green-100">
-                Submit your disaster assistance application
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4 mb-6">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                  <p className="text-gray-600">Mobile-friendly application across all channels</p>
+            {/* Survivor Application Interface */}
+            <Card className="flex-1 hover:shadow-xl transition-all duration-300 border-2 hover:border-green-200">
+              <CardHeader className="bg-green-600 text-white rounded-t-lg">
+                <CardTitle className="flex items-center space-x-3 text-xl">
+                  <Users className="h-6 w-6" />
+                  <span>Apply for Assistance</span>
+                </CardTitle>
+                <CardDescription className="text-green-100">
+                  Submit your disaster assistance application
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <p className="text-gray-600">Mobile-friendly application across all channels</p>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <p className="text-gray-600">Real-time guidance and error prevention</p>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <p className="text-gray-600">Progress saving and status updates</p>
+                  </div>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                  <p className="text-gray-600">Real-time guidance and error prevention</p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                  <p className="text-gray-600">Progress saving and status updates</p>
-                </div>
-              </div>
-              <Button 
-                onClick={() => navigate('/apply')}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-3"
-              >
-                Start Application
-              </Button>
-            </CardContent>
-          </Card>
+                <Button 
+                  onClick={() => navigate('/apply')}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3"
+                >
+                  Start Application
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Additional Information */}
-        <div className="mt-16 bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <FileText className="h-12 w-12 text-blue-600 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-gray-800 mb-2">System Features</h3>

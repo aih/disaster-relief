@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-import { Users, FileText, AlertCircle, CheckCircle, Phone, Mail } from "lucide-react";
+import { Users, FileText, AlertCircle, CheckCircle, Phone, Mail, Upload, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,6 +16,12 @@ const SurvivorApplication = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
+  const [uploadedFiles, setUploadedFiles] = useState<{[key: string]: File[]}>({
+    insurance: [],
+    id: [],
+    receipts: [],
+    damage: []
+  });
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -32,8 +38,25 @@ const SurvivorApplication = () => {
     previousFEMAAssistance: false
   });
 
-  const totalSteps = 4;
+  const totalSteps = 5; // Updated to include document upload step
   const progress = (currentStep / totalSteps) * 100;
+
+  const handleFileUpload = (category: string, files: FileList | null) => {
+    if (files) {
+      const fileArray = Array.from(files);
+      setUploadedFiles(prev => ({
+        ...prev,
+        [category]: [...prev[category], ...fileArray]
+      }));
+    }
+  };
+
+  const removeFile = (category: string, index: number) => {
+    setUploadedFiles(prev => ({
+      ...prev,
+      [category]: prev[category].filter((_, i) => i !== index)
+    }));
+  };
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -297,6 +320,161 @@ const SurvivorApplication = () => {
         );
 
       case 4:
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Document Upload</h2>
+              <p className="text-gray-600">Upload supporting documents to help process your application faster.</p>
+            </div>
+
+            <div className="space-y-6">
+              {/* Insurance Documentation */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-800 mb-3">Insurance Documentation</h3>
+                <div className="space-y-3">
+                  <Label htmlFor="insurance-upload">Insurance policy, claim forms, or denial letters</Label>
+                  <Input
+                    id="insurance-upload"
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    onChange={(e) => handleFileUpload('insurance', e.target.files)}
+                    className="cursor-pointer"
+                  />
+                  {uploadedFiles.insurance.length > 0 && (
+                    <div className="space-y-2">
+                      {uploadedFiles.insurance.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                          <span className="text-sm text-gray-600">{file.name}</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeFile('insurance', index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* ID Verification */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-800 mb-3">ID Verification</h3>
+                <div className="space-y-3">
+                  <Label htmlFor="id-upload">Driver's license, passport, or state-issued ID</Label>
+                  <Input
+                    id="id-upload"
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={(e) => handleFileUpload('id', e.target.files)}
+                    className="cursor-pointer"
+                  />
+                  {uploadedFiles.id.length > 0 && (
+                    <div className="space-y-2">
+                      {uploadedFiles.id.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                          <span className="text-sm text-gray-600">{file.name}</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeFile('id', index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Receipts and Expenses */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-800 mb-3">Receipts and Expenses</h3>
+                <div className="space-y-3">
+                  <Label htmlFor="receipts-upload">Temporary lodging, repairs, or other disaster-related expenses</Label>
+                  <Input
+                    id="receipts-upload"
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    onChange={(e) => handleFileUpload('receipts', e.target.files)}
+                    className="cursor-pointer"
+                  />
+                  {uploadedFiles.receipts.length > 0 && (
+                    <div className="space-y-2">
+                      {uploadedFiles.receipts.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                          <span className="text-sm text-gray-600">{file.name}</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeFile('receipts', index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Damage Photos */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-800 mb-3">Damage Photos</h3>
+                <div className="space-y-3">
+                  <Label htmlFor="damage-upload">Photos showing damage to your property</Label>
+                  <Input
+                    id="damage-upload"
+                    type="file"
+                    multiple
+                    accept=".jpg,.jpeg,.png"
+                    onChange={(e) => handleFileUpload('damage', e.target.files)}
+                    className="cursor-pointer"
+                  />
+                  {uploadedFiles.damage.length > 0 && (
+                    <div className="space-y-2">
+                      {uploadedFiles.damage.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                          <span className="text-sm text-gray-600">{file.name}</span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => removeFile('damage', index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="flex items-start space-x-3">
+                <Upload className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-blue-800">Document Upload Tips</h4>
+                  <ul className="text-blue-700 text-sm mt-1 space-y-1">
+                    <li>• Accepted formats: PDF, JPG, PNG, DOC, DOCX</li>
+                    <li>• Maximum file size: 10MB per file</li>
+                    <li>• You can upload documents now or mail them later</li>
+                    <li>• Clear photos and scanned documents process faster</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 5:
         return (
           <div className="space-y-6">
             <div>
