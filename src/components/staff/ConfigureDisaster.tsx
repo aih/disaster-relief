@@ -21,6 +21,13 @@ interface AssistanceProgram {
   rules: string[];
 }
 
+interface GoverningLaw {
+  id: string;
+  title: string;
+  reference: string;
+  description: string;
+}
+
 const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
   const [basicInfo, setBasicInfo] = useState({
     disasterId: "",
@@ -28,9 +35,12 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
     state: "",
     counties: "",
     disasterType: "",
+    otherDisasterType: "",
     applicationDeadline: "",
     disasterStartDate: "",
   });
+
+  const [governingLaws, setGoverningLaws] = useState<GoverningLaw[]>([]);
 
   const [assistancePrograms, setAssistancePrograms] = useState<AssistanceProgram[]>([
     {
@@ -125,6 +135,26 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
     { code: "AS", name: "American Samoa" },
     { code: "MP", name: "Northern Mariana Islands" }
   ];
+
+  const addGoverningLaw = () => {
+    const newLaw: GoverningLaw = {
+      id: `law_${Date.now()}`,
+      title: "",
+      reference: "",
+      description: ""
+    };
+    setGoverningLaws([...governingLaws, newLaw]);
+  };
+
+  const updateGoverningLaw = (id: string, field: keyof Omit<GoverningLaw, 'id'>, value: string) => {
+    setGoverningLaws(laws => laws.map(law => 
+      law.id === id ? { ...law, [field]: value } : law
+    ));
+  };
+
+  const removeGoverningLaw = (id: string) => {
+    setGoverningLaws(laws => laws.filter(law => law.id !== id));
+  };
 
   const addProgram = () => {
     setAssistancePrograms([...assistancePrograms, {
@@ -241,9 +271,21 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                       <SelectItem value="tornado">Tornado</SelectItem>
                       <SelectItem value="severe_storms">Severe Storms</SelectItem>
                       <SelectItem value="earthquake">Earthquake</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+                {basicInfo.disasterType === 'other' && (
+                  <div>
+                    <Label htmlFor="other-disaster-type">Specify Other Disaster Type</Label>
+                    <Input 
+                      id="other-disaster-type" 
+                      placeholder="Enter disaster type"
+                      value={basicInfo.otherDisasterType}
+                      onChange={(e) => setBasicInfo({...basicInfo, otherDisasterType: e.target.value})}
+                    />
+                  </div>
+                )}
                 <div>
                   <Label htmlFor="deadline">Application Deadline</Label>
                   <Input 
@@ -265,6 +307,76 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                 </div>
               </div>
             </div>
+
+            {/* Governing Laws and Regulations Section */}
+            <Card className="border-l-4 border-l-purple-500">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="text-lg">Governing Laws and Regulations</CardTitle>
+                    <CardDescription>
+                      Add applicable federal and state laws that govern this disaster assistance
+                    </CardDescription>
+                  </div>
+                  <Button onClick={addGoverningLaw} variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Law
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {governingLaws.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No governing laws added yet. Click "Add Law" to get started.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {governingLaws.map((law) => (
+                      <div key={law.id} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1 grid md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor={`law-title-${law.id}`}>Law Title</Label>
+                              <Input
+                                id={`law-title-${law.id}`}
+                                placeholder="e.g., Stafford Act"
+                                value={law.title}
+                                onChange={(e) => updateGoverningLaw(law.id, 'title', e.target.value)}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor={`law-reference-${law.id}`}>Legal Reference</Label>
+                              <Input
+                                id={`law-reference-${law.id}`}
+                                placeholder="e.g., 42 U.S.C. § 5121"
+                                value={law.reference}
+                                onChange={(e) => updateGoverningLaw(law.id, 'reference', e.target.value)}
+                              />
+                            </div>
+                          </div>
+                          <Button
+                            onClick={() => removeGoverningLaw(law.id)}
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <div>
+                          <Label htmlFor={`law-description-${law.id}`}>Description/Relevance</Label>
+                          <Textarea
+                            id={`law-description-${law.id}`}
+                            placeholder="Describe how this law applies to the disaster assistance..."
+                            rows={2}
+                            value={law.description}
+                            onChange={(e) => updateGoverningLaw(law.id, 'description', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="programs" className="space-y-6">
@@ -463,9 +575,21 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                 <p><strong>Name:</strong> {basicInfo.disasterName || "Not specified"}</p>
                 <p><strong>State:</strong> {basicInfo.state ? usStates.find(s => s.code === basicInfo.state)?.name : "Not specified"}</p>
                 <p><strong>Counties:</strong> {basicInfo.counties || "Not specified"}</p>
-                <p><strong>Type:</strong> {basicInfo.disasterType || "Not specified"}</p>
+                <p><strong>Type:</strong> {basicInfo.disasterType === 'other' ? basicInfo.otherDisasterType : basicInfo.disasterType || "Not specified"}</p>
                 <p><strong>Start Date:</strong> {basicInfo.disasterStartDate || "Not specified"}</p>
                 <p><strong>Application Deadline:</strong> {basicInfo.applicationDeadline || "Not specified"}</p>
+                {governingLaws.length > 0 && (
+                  <div>
+                    <strong>Governing Laws ({governingLaws.length}):</strong>
+                    <ul className="list-disc list-inside ml-4 mt-1">
+                      {governingLaws.map(law => (
+                        <li key={law.id} className="text-sm">
+                          {law.title} {law.reference && `(${law.reference})`}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
