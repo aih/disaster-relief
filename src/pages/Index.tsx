@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shield, Settings, FileText, Brain, Zap, AlertTriangle } from "lucide-react";
+import { Shield, Settings, FileText, Brain, Zap, AlertTriangle, Smartphone, Lock, Copy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
@@ -58,7 +58,7 @@ const Index = () => {
                   </div>
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                    <p className="text-gray-600">Intelligent application processing and fraud detection</p>
+                    <p className="text-gray-600">Deterministic eligibility processing with human oversight</p>
                   </div>
                 </div>
                 <Button 
@@ -101,7 +101,7 @@ const Index = () => {
                 </div>
                 <div className="border-l-4 border-orange-500 pl-4">
                   <p className="font-medium">4. Policy Generation</p>
-                  <p className="text-sm">Automatically generate Python policy files and web application forms</p>
+                  <p className="text-sm">Automatically generate rules engine policy files and web application forms</p>
                 </div>
               </div>
             </div>
@@ -117,8 +117,8 @@ const Index = () => {
                   <p className="text-sm">Automatically generates survivor-facing application forms with appropriate fields, validation, and guidance based on disaster configuration</p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="font-medium text-blue-700">Python Rules Engine</p>
-                  <p className="text-sm">Creates a rules-based eligibility engine using Python framework that evaluates applications against configured criteria and documentation requirements</p>
+                  <p className="font-medium text-blue-700">Deterministic Rules Engine</p>
+                  <p className="text-sm">Creates a rules-based eligibility engine that evaluates applications against configured criteria with human review for all final determinations</p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="font-medium text-purple-700">Policy Documentation</p>
@@ -131,7 +131,7 @@ const Index = () => {
           <div className="border-t pt-8">
             <h4 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center justify-center">
               <Brain className="h-6 w-6 text-indigo-600 mr-2" />
-              AI-Powered Intelligence
+              AI-Powered Assistance
             </h4>
             
             <div className="grid md:grid-cols-3 gap-6">
@@ -139,46 +139,63 @@ const Index = () => {
                 <div className="bg-indigo-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <FileText className="h-8 w-8 text-indigo-600" />
                 </div>
-                <h5 className="font-semibold text-gray-800 mb-2">Policy Translation</h5>
-                <p className="text-gray-600 text-sm">AI converts plain language disaster policies into structured configuration parameters, extracting eligibility criteria, program details, and special provisions automatically</p>
+                <h5 className="font-semibold text-gray-800 mb-2">Configuration Acceleration</h5>
+                <p className="text-gray-600 text-sm">AI converts plain language disaster policies into structured configuration parameters, extracting eligibility criteria and program details to speed up setup</p>
               </div>
               
               <div className="text-center">
                 <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <Zap className="h-8 w-8 text-green-600" />
                 </div>
-                <h5 className="font-semibold text-gray-800 mb-2">Efficient Processing</h5>
-                <p className="text-gray-600 text-sm">Machine learning algorithms analyze application patterns to streamline processing, auto-approve qualifying cases, and prioritize complex applications for human review</p>
+                <h5 className="font-semibold text-gray-800 mb-2">Processing Efficiency</h5>
+                <p className="text-gray-600 text-sm">AI assists in streamlining application processing and documentation review, while all final eligibility determinations remain with human reviewers</p>
               </div>
               
               <div className="text-center">
                 <div className="bg-red-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <AlertTriangle className="h-8 w-8 text-red-600" />
                 </div>
-                <h5 className="font-semibold text-gray-800 mb-2">Fraud Detection</h5>
-                <p className="text-gray-600 text-sm">Advanced AI models detect anomalies in applications, flag potential fraud indicators, and identify suspicious patterns across multiple submissions for investigation</p>
+                <h5 className="font-semibold text-gray-800 mb-2">Issue Flagging</h5>
+                <p className="text-gray-600 text-sm">AI models detect anomalies and flag potential issues in applications for human investigation, ensuring program integrity</p>
               </div>
             </div>
           </div>
 
           <div className="mt-8 p-6 bg-blue-50 rounded-lg">
-            <h5 className="font-semibold text-blue-900 mb-3">Technical Architecture</h5>
-            <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-800">
+            <h5 className="font-semibold text-blue-900 mb-3">System Architecture & Access</h5>
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <p className="font-medium">Configuration as Code</p>
-                <p>Each disaster policy becomes a Python module (policy.py) with executable eligibility rules</p>
+                <div className="space-y-4 text-sm text-blue-800">
+                  <div>
+                    <p className="font-medium flex items-center">
+                      <Smartphone className="h-4 w-4 mr-2" />
+                      Universal Access
+                    </p>
+                    <p>Application and status data accessible on mobile devices and computers, ensuring survivors can apply and check status anywhere</p>
+                  </div>
+                  <div>
+                    <p className="font-medium flex items-center">
+                      <Lock className="h-4 w-4 mr-2" />
+                      Secure Authentication
+                    </p>
+                    <p>Role-based access controls ensure only authorized FEMA administrators can configure disaster parameters and modify system settings</p>
+                  </div>
+                </div>
               </div>
               <div>
-                <p className="font-medium">Reusable Components</p>
-                <p>Common rules like "is in declared area" are shared across all disaster policies</p>
-              </div>
-              <div>
-                <p className="font-medium">Dynamic Loading</p>
-                <p>New policies are automatically discovered and loaded without system downtime</p>
-              </div>
-              <div>
-                <p className="font-medium">Version Control</p>
-                <p>All configurations are tracked with full audit trails and rollback capabilities</p>
+                <div className="space-y-4 text-sm text-blue-800">
+                  <div>
+                    <p className="font-medium flex items-center">
+                      <Copy className="h-4 w-4 mr-2" />
+                      Modular Configurations
+                    </p>
+                    <p>Disaster configurations are modular and reusable - copy existing configurations to new disasters and modify as needed</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">Deterministic Processing</p>
+                    <p>All eligibility determinations made by rules engine with mandatory human review - AI assists but never makes final decisions</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -212,8 +229,8 @@ const Index = () => {
               <div className="bg-purple-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                 <Brain className="h-8 w-8 text-purple-600" />
               </div>
-              <h4 className="font-semibold text-gray-800 mb-2">Intelligence</h4>
-              <p className="text-gray-600 text-sm">AI-powered processing reduces manual work and improves decision accuracy</p>
+              <h4 className="font-semibold text-gray-800 mb-2">Human-Centered AI</h4>
+              <p className="text-gray-600 text-sm">AI assists with setup and flagging while humans maintain control over all eligibility decisions</p>
             </div>
           </div>
         </div>
