@@ -30,7 +30,7 @@ const GoverningItemsManager = ({ items, onItemsChange }: GoverningItemsManagerPr
       <div className="space-y-2">
         <div className="flex space-x-2">
           <Input 
-            placeholder="Add title and reference"
+            placeholder="Add law, regulation, or policy reference"
             value={newItem}
             onChange={(e) => setNewItem(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && addItem()}
