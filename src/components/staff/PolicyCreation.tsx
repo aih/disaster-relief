@@ -1,14 +1,10 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { FileCode, Wand2, CheckCircle, AlertCircle, Download, Plus, X } from "lucide-react";
+import { FileCode, Wand2, CheckCircle } from "lucide-react";
+import PolicyInputForm from "./PolicyInputForm";
 import PolicyTextProcessor from "./PolicyTextProcessor";
 import PolicyPreview from "./PolicyPreview";
 import PolicyCodeGenerator from "./PolicyCodeGenerator";
@@ -28,66 +24,9 @@ const PolicyCreation = () => {
     governingItems: [] as string[]
   });
 
-  const [newGoverningItem, setNewGoverningItem] = useState("");
-
-  const usStates = [
-    { code: "AL", name: "Alabama" },
-    { code: "AK", name: "Alaska" },
-    { code: "AZ", name: "Arizona" },
-    { code: "AR", name: "Arkansas" },
-    { code: "CA", name: "California" },
-    { code: "CO", name: "Colorado" },
-    { code: "CT", name: "Connecticut" },
-    { code: "DE", name: "Delaware" },
-    { code: "FL", name: "Florida" },
-    { code: "GA", name: "Georgia" },
-    { code: "HI", name: "Hawaii" },
-    { code: "ID", name: "Idaho" },
-    { code: "IL", name: "Illinois" },
-    { code: "IN", name: "Indiana" },
-    { code: "IA", name: "Iowa" },
-    { code: "KS", name: "Kansas" },
-    { code: "KY", name: "Kentucky" },
-    { code: "LA", name: "Louisiana" },
-    { code: "ME", name: "Maine" },
-    { code: "MD", name: "Maryland" },
-    { code: "MA", name: "Massachusetts" },
-    { code: "MI", name: "Michigan" },
-    { code: "MN", name: "Minnesota" },
-    { code: "MS", name: "Mississippi" },
-    { code: "MO", name: "Missouri" },
-    { code: "MT", name: "Montana" },
-    { code: "NE", name: "Nebraska" },
-    { code: "NV", name: "Nevada" },
-    { code: "NH", name: "New Hampshire" },
-    { code: "NJ", name: "New Jersey" },
-    { code: "NM", name: "New Mexico" },
-    { code: "NY", name: "New York" },
-    { code: "NC", name: "North Carolina" },
-    { code: "ND", name: "North Dakota" },
-    { code: "OH", name: "Ohio" },
-    { code: "OK", name: "Oklahoma" },
-    { code: "OR", name: "Oregon" },
-    { code: "PA", name: "Pennsylvania" },
-    { code: "RI", name: "Rhode Island" },
-    { code: "SC", name: "South Carolina" },
-    { code: "SD", name: "South Dakota" },
-    { code: "TN", name: "Tennessee" },
-    { code: "TX", name: "Texas" },
-    { code: "UT", name: "Utah" },
-    { code: "VT", name: "Vermont" },
-    { code: "VA", name: "Virginia" },
-    { code: "WA", name: "Washington" },
-    { code: "WV", name: "West Virginia" },
-    { code: "WI", name: "Wisconsin" },
-    { code: "WY", name: "Wyoming" },
-    { code: "DC", name: "District of Columbia" },
-    { code: "PR", name: "Puerto Rico" },
-    { code: "VI", name: "U.S. Virgin Islands" },
-    { code: "GU", name: "Guam" },
-    { code: "AS", name: "American Samoa" },
-    { code: "MP", name: "Northern Mariana Islands" }
-  ];
+  const handleUpdatePolicyData = (updates: any) => {
+    setPolicyData(prev => ({ ...prev, ...updates }));
+  };
 
   const handleProcessText = (processedPolicy: any) => {
     setPolicyData(prev => ({ ...prev, structuredPolicy: processedPolicy }));
@@ -112,23 +51,6 @@ const PolicyCreation = () => {
       title: "Policy Saved",
       description: `Policy ${policyData.disasterId} has been saved and is ready for deployment.`,
     });
-  };
-
-  const addGoverningItem = () => {
-    if (newGoverningItem.trim()) {
-      setPolicyData(prev => ({
-        ...prev,
-        governingItems: [...prev.governingItems, newGoverningItem.trim()]
-      }));
-      setNewGoverningItem("");
-    }
-  };
-
-  const removeGoverningItem = (index: number) => {
-    setPolicyData(prev => ({
-      ...prev,
-      governingItems: prev.governingItems.filter((_, i) => i !== index)
-    }));
   };
 
   return (
@@ -172,138 +94,12 @@ const PolicyCreation = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="input" className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="disaster-id">Disaster Declaration ID</Label>
-                  <Input 
-                    id="disaster-id" 
-                    placeholder="DR-XXXX-ST-County"
-                    value={policyData.disasterId}
-                    onChange={(e) => setPolicyData(prev => ({ ...prev, disasterId: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="disaster-name">Disaster Name</Label>
-                  <Input 
-                    id="disaster-name" 
-                    placeholder="e.g., Hurricane Milton"
-                    value={policyData.disasterName}
-                    onChange={(e) => setPolicyData(prev => ({ ...prev, disasterName: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="state">State</Label>
-                  <Select value={policyData.state} onValueChange={(value) => setPolicyData(prev => ({ ...prev, state: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select state" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {usStates.map((state) => (
-                        <SelectItem key={state.code} value={state.code}>
-                          {state.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="counties">Affected Counties</Label>
-                  <Input 
-                    id="counties" 
-                    placeholder="e.g., Broome, Tioga"
-                    value={policyData.counties}
-                    onChange={(e) => setPolicyData(prev => ({ ...prev, counties: e.target.value }))}
-                  />
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="disaster-type">Disaster Type</Label>
-                  <Select value={policyData.disasterType} onValueChange={(value) => setPolicyData(prev => ({ ...prev, disasterType: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select disaster type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="hurricane">Hurricane</SelectItem>
-                      <SelectItem value="flooding">Flooding</SelectItem>
-                      <SelectItem value="wildfire">Wildfire</SelectItem>
-                      <SelectItem value="tornado">Tornado</SelectItem>
-                      <SelectItem value="severe_storms">Severe Storms</SelectItem>
-                      <SelectItem value="earthquake">Earthquake</SelectItem>
-                      <SelectItem value="drought">Drought</SelectItem>
-                      <SelectItem value="winter_storm">Winter Storm</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="governing-items">Governing Laws, Regulations and Policies</Label>
-                  <div className="space-y-2">
-                    <div className="flex space-x-2">
-                      <Input 
-                        placeholder="Add law, regulation, or policy reference"
-                        value={newGoverningItem}
-                        onChange={(e) => setNewGoverningItem(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addGoverningItem()}
-                      />
-                      <Button 
-                        type="button" 
-                        onClick={addGoverningItem}
-                        size="sm"
-                        disabled={!newGoverningItem.trim()}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {policyData.governingItems.length > 0 && (
-                      <div className="space-y-1">
-                        {policyData.governingItems.map((item, index) => (
-                          <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                            <span className="text-sm">{item}</span>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeGoverningItem(index)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="policy-text">Policy Document (Plain Text)</Label>
-              <Textarea 
-                id="policy-text"
-                placeholder="Paste the plain-language policy document here. Include details about:
-- Available assistance programs and maximum awards
-- Eligibility requirements for each program
-- Special provisions or waivers
-- Documentation requirements
-- Any expedited processing criteria
-
-Example: 'For Broome County, expedited Serious Needs Assistance up to $770 is available for immediate needs. Clean and Sanitize assistance up to $300 requires no inspection...'"
-                rows={12}
-                className="font-mono text-sm"
-                value={policyData.plainTextPolicy}
-                onChange={(e) => setPolicyData(prev => ({ ...prev, plainTextPolicy: e.target.value }))}
-              />
-            </div>
-
-            <Button 
-              onClick={() => setCurrentStep("process")}
-              disabled={!policyData.disasterId || !policyData.plainTextPolicy}
-              className="w-full"
-            >
-              Process Policy Text with AI
-            </Button>
+          <TabsContent value="input">
+            <PolicyInputForm
+              policyData={policyData}
+              onUpdate={handleUpdatePolicyData}
+              onNext={() => setCurrentStep("process")}
+            />
           </TabsContent>
 
           <TabsContent value="process">
