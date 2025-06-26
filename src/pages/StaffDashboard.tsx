@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import StaffHeader from "@/components/staff/StaffHeader";
 import ConfigureDisaster from "@/components/staff/ConfigureDisaster";
 import DisasterReview from "@/components/staff/DisasterReview";
+import EligibilityRules from "@/components/staff/EligibilityRules";
 
 const StaffDashboard = () => {
   const { toast } = useToast();
@@ -22,9 +23,10 @@ const StaffDashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="configure" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="configure">Configure New Disaster</TabsTrigger>
             <TabsTrigger value="review">Review Stored Disasters</TabsTrigger>
+            <TabsTrigger value="rules">Eligibility Rules</TabsTrigger>
           </TabsList>
 
           <TabsContent value="configure">
@@ -33,6 +35,10 @@ const StaffDashboard = () => {
 
           <TabsContent value="review">
             <DisasterReview />
+          </TabsContent>
+
+          <TabsContent value="rules">
+            <EligibilityRules />
           </TabsContent>
         </Tabs>
       </div>
