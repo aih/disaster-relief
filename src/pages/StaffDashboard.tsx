@@ -1,8 +1,10 @@
 
 import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import StaffHeader from "@/components/staff/StaffHeader";
 import ConfigureDisaster from "@/components/staff/ConfigureDisaster";
+import DisasterReview from "@/components/staff/DisasterReview";
 
 const StaffDashboard = () => {
   const { toast } = useToast();
@@ -19,7 +21,20 @@ const StaffDashboard = () => {
       <StaffHeader />
 
       <div className="container mx-auto px-4 py-8">
-        <ConfigureDisaster onSave={handleSaveDisaster} />
+        <Tabs defaultValue="configure" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="configure">Configure New Disaster</TabsTrigger>
+            <TabsTrigger value="review">Review Stored Disasters</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="configure">
+            <ConfigureDisaster onSave={handleSaveDisaster} />
+          </TabsContent>
+
+          <TabsContent value="review">
+            <DisasterReview />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
