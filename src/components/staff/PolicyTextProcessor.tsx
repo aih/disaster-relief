@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { AlertCircle, CheckCircle, Loader2, Wand2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle, CheckCircle, Loader2, Wand2, Info } from "lucide-react";
 
 interface PolicyTextProcessorProps {
   policyData: any;
@@ -85,6 +86,16 @@ const PolicyTextProcessor = ({ policyData, onProcessComplete }: PolicyTextProces
 
   return (
     <div className="space-y-6">
+      <Alert className="border-amber-200 bg-amber-50">
+        <Info className="h-4 w-4 text-amber-600" />
+        <AlertDescription className="text-amber-800">
+          <strong>Demonstration Only:</strong> This AI processing simulation is for demonstration purposes only. 
+          In a production system, the plain text policy would be processed by advanced language models 
+          to extract structured configuration data. The current interface shows the expected workflow 
+          and user experience, but no actual AI processing is occurring.
+        </AlertDescription>
+      </Alert>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -108,7 +119,7 @@ const PolicyTextProcessor = ({ policyData, onProcessComplete }: PolicyTextProces
           {!processing && progress === 0 && (
             <Button onClick={simulateProcessing} className="w-full">
               <Wand2 className="h-4 w-4 mr-2" />
-              Start AI Processing
+              Start AI Processing (Demo)
             </Button>
           )}
 
