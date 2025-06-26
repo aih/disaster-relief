@@ -55,6 +55,10 @@ const AddRuleForm = ({ onAdd, onCancel }: AddRuleFormProps) => {
     }
   };
 
+  const canHaveDocuments = (ruleType: string) => {
+    return ruleType === 'documentation' || ruleType === 'validation' || ruleType === 'condition';
+  };
+
   const addRule = () => {
     if (newRule.name && newRule.description && newRule.plainLanguage) {
       const validation = validateRuleName(newRule.name, newRule.ruleType || 'validation');
@@ -136,6 +140,10 @@ const AddRuleForm = ({ onAdd, onCancel }: AddRuleFormProps) => {
                   const error = validateRuleName(newRule.name, newType);
                   setValidationError(error);
                 }
+                // Clear documents if switching to location type
+                if (newType === 'location') {
+                  setNewRule(prev => ({ ...prev, ruleType: newType, requiredDocuments: [] }));
+                }
               }}
             >
               <option value="validation">Validation</option>
@@ -168,9 +176,9 @@ const AddRuleForm = ({ onAdd, onCancel }: AddRuleFormProps) => {
           />
         </div>
 
-        {(newRule.ruleType === 'documentation') && (
+        {canHaveDocuments(newRule.ruleType || 'validation') && (
           <div>
-            <Label>Required Documents</Label>
+            <Label>Required Documents {newRule.ruleType !== 'documentation' && <span className="text-sm text-gray-500">(optional)</span>}</Label>
             <div className="space-y-2">
               {newRule.requiredDocuments?.map((doc, index) => (
                 <div key={index} className="flex items-center space-x-2">

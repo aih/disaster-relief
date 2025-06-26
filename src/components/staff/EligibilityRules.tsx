@@ -30,6 +30,7 @@ const EligibilityRules = () => {
       description: "Applicant has passed all required identity and eligibility validations",
       plainLanguage: "You must provide valid identification and meet basic eligibility requirements for disaster assistance.",
       ruleType: "validation",
+      requiredDocuments: ["Government-issued photo ID", "Social Security card or verification", "Proof of address"]
     },
     {
       id: "rule_is_in_geofence",
@@ -51,6 +52,7 @@ const EligibilityRules = () => {
       description: "Property inspection confirmed minor damage requiring assistance",
       plainLanguage: "An inspector must have visited your property and confirmed that you have damage that qualifies for assistance.",
       ruleType: "validation",
+      requiredDocuments: ["Inspector report", "Damage assessment photos", "Property ownership documentation"]
     },
     {
       id: "rule_has_death_certificate",
@@ -74,6 +76,7 @@ const EligibilityRules = () => {
       description: "The damaged vehicle must be the applicant's only means of transportation",
       plainLanguage: "The damaged vehicle must be your only working vehicle that you depend on for transportation.",
       ruleType: "condition",
+      requiredDocuments: ["Vehicle registration", "Affidavit of sole vehicle ownership"]
     },
     {
       id: "rule_vehicle_registered_and_insured",
@@ -113,6 +116,7 @@ const EligibilityRules = () => {
       description: "Applicant must be legally responsible for funeral expenses",
       plainLanguage: "You must be the person legally responsible for paying the funeral costs of the deceased.",
       ruleType: "condition",
+      requiredDocuments: ["Legal relationship documentation", "Funeral home contract or agreement"]
     },
     {
       id: "rule_death_caused_by_disaster",
@@ -120,6 +124,7 @@ const EligibilityRules = () => {
       description: "The death must be directly attributable to the declared disaster",
       plainLanguage: "The person's death must have been directly caused by the disaster or its immediate effects.",
       ruleType: "condition",
+      requiredDocuments: ["Medical examiner report", "Death certificate with cause of death", "Coroner's report (if applicable)"]
     }
   ]);
 
