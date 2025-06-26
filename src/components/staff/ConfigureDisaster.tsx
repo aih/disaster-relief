@@ -3,144 +3,142 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Save, AlertTriangle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-
-interface AssistanceProgram {
-  name: string;
-  max_award: number;
-  rules: string[];
-}
-
-interface GoverningLaw {
-  title: string;
-  reference: string;
-  description: string;
-}
-
-const DISASTER_TYPES = [
-  "All Hazards",
-  "Emergency Alerts", 
-  "Attacks in Public Places",
-  "Avalanche",
-  "Biohazard Exposure",
-  "Cybersecurity",
-  "Drought",
-  "Earthquakes",
-  "Explosions", 
-  "Extreme Heat",
-  "Floods",
-  "Chemicals and Hazardous Materials Incidents",
-  "Home Fires",
-  "Home Safety",
-  "Household Chemical Emergencies",
-  "Hurricanes",
-  "Landslides & Debris Flow", 
-  "Radiation Emergencies",
-  "Pandemic",
-  "Power Outages",
-  "Severe Weather",
-  "Space Weather", 
-  "Thunderstorms & Lightning",
-  "Tornadoes",
-  "Tsunamis",
-  "Volcanoes",
-  "Wildfires",
-  "Winter Weather"
-];
-
-const AVAILABLE_RULES = [
-  "rule_is_in_declared_area",
-  "rule_passed_validations", 
-  "rule_is_in_geofence",
-  "rule_reported_immediate_need",
-  "rule_inspection_found_minor_damage",
-  "rule_is_only_vehicle",
-  "rule_vehicle_registered_and_insured",
-  "has_insurance_settlement_info",
-  "has_repair_bill",
-  "has_replacement_proof",
-  "rule_is_responsible_for_funeral",
-  "rule_death_caused_by_disaster",
-  "has_death_certificate",
-  "has_funeral_bill"
-];
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, CheckCircle, Trash2, AlertTriangle } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface ConfigureDisasterProps {
   onSave: () => void;
 }
 
+interface AssistanceProgram {
+  name: string;
+  maxAward: number;
+  isExpedited: boolean;
+  inspectionWaived: boolean;
+  rules: string[];
+}
+
+interface GoverningLaw {
+  id: string;
+  title: string;
+  reference: string;
+  description: string;
+}
+
 const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
-  const { toast } = useToast();
-  const [disasterName, setDisasterName] = useState("");
-  const [disasterType, setDisasterType] = useState("");
-  const [declaredCounties, setDeclaredCounties] = useState<string[]>([]);
-  const [countyInput, setCountyInput] = useState("");
-  const [programs, setPrograms] = useState<AssistanceProgram[]>([]);
-  const [specialPolicies, setSpecialPolicies] = useState<string[]>([]);
-  const [policyInput, setPolicyInput] = useState("");
+  const [basicInfo, setBasicInfo] = useState({
+    disasterId: "",
+    disasterName: "",
+    state: "",
+    counties: "",
+    disasterType: "",
+    otherDisasterType: "",
+    applicationDeadline: "",
+    disasterStartDate: "",
+  });
+
   const [governingLaws, setGoverningLaws] = useState<GoverningLaw[]>([]);
 
-  const addCounty = () => {
-    if (countyInput.trim() && !declaredCounties.includes(countyInput.trim())) {
-      setDeclaredCounties([...declaredCounties, countyInput.trim()]);
-      setCountyInput("");
+  const [assistancePrograms, setAssistancePrograms] = useState<AssistanceProgram[]>([
+    {
+      name: "Serious Needs Assistance (Regular)",
+      maxAward: 770,
+      isExpedited: false,
+      inspectionWaived: false,
+      rules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_inspection_found_minor_damage"]
     }
-  };
+  ]);
 
-  const removeCounty = (county: string) => {
-    setDeclaredCounties(declaredCounties.filter(c => c !== county));
-  };
+  const [specialProvisions, setSpecialProvisions] = useState({
+    expeditedSNA: false,
+    cleanSanitizeWaiver: false,
+    displacementWaiver: false,
+    geofenceActivated: false,
+    autoAdjudication: false,
+  });
 
-  const addProgram = () => {
-    const newProgram: AssistanceProgram = {
-      name: "New Program",
-      max_award: 0,
-      rules: []
-    };
-    setPrograms([...programs, newProgram]);
-  };
+  const availableRules = [
+    "rule_is_in_declared_area",
+    "rule_passed_validations", 
+    "rule_is_in_geofence",
+    "rule_reported_immediate_need",
+    "rule_inspection_found_minor_damage",
+    "rule_is_only_vehicle",
+    "rule_vehicle_registered_and_insured",
+    "rule_has_insurance_settlement_info",
+    "rule_has_repair_bill",
+    "rule_has_replacement_proof",
+    "rule_is_responsible_for_funeral",
+    "rule_death_caused_by_disaster",
+    "rule_has_death_certificate",
+    "rule_has_funeral_bill"
+  ];
 
-  const updateProgram = (index: number, field: keyof AssistanceProgram, value: any) => {
-    const updatedPrograms = [...programs];
-    updatedPrograms[index] = { ...updatedPrograms[index], [field]: value };
-    setPrograms(updatedPrograms);
-  };
-
-  const removeProgram = (index: number) => {
-    setPrograms(programs.filter((_, i) => i !== index));
-  };
-
-  const addRuleToProgram = (programIndex: number, rule: string) => {
-    const updatedPrograms = [...programs];
-    if (!updatedPrograms[programIndex].rules.includes(rule)) {
-      updatedPrograms[programIndex].rules.push(rule);
-      setPrograms(updatedPrograms);
-    }
-  };
-
-  const removeRuleFromProgram = (programIndex: number, rule: string) => {
-    const updatedPrograms = [...programs];
-    updatedPrograms[programIndex].rules = updatedPrograms[programIndex].rules.filter(r => r !== rule);
-    setPrograms(updatedPrograms);
-  };
-
-  const addSpecialPolicy = () => {
-    if (policyInput.trim() && !specialPolicies.includes(policyInput.trim())) {
-      setSpecialPolicies([...specialPolicies, policyInput.trim()]);
-      setPolicyInput("");
-    }
-  };
-
-  const removeSpecialPolicy = (policy: string) => {
-    setSpecialPolicies(specialPolicies.filter(p => p !== policy));
-  };
+  const usStates = [
+    { code: "AL", name: "Alabama" },
+    { code: "AK", name: "Alaska" },
+    { code: "AZ", name: "Arizona" },
+    { code: "AR", name: "Arkansas" },
+    { code: "CA", name: "California" },
+    { code: "CO", name: "Colorado" },
+    { code: "CT", name: "Connecticut" },
+    { code: "DE", name: "Delaware" },
+    { code: "FL", name: "Florida" },
+    { code: "GA", name: "Georgia" },
+    { code: "HI", name: "Hawaii" },
+    { code: "ID", name: "Idaho" },
+    { code: "IL", name: "Illinois" },
+    { code: "IN", name: "Indiana" },
+    { code: "IA", name: "Iowa" },
+    { code: "KS", name: "Kansas" },
+    { code: "KY", name: "Kentucky" },
+    { code: "LA", name: "Louisiana" },
+    { code: "ME", name: "Maine" },
+    { code: "MD", name: "Maryland" },
+    { code: "MA", name: "Massachusetts" },
+    { code: "MI", name: "Michigan" },
+    { code: "MN", name: "Minnesota" },
+    { code: "MS", name: "Mississippi" },
+    { code: "MO", name: "Missouri" },
+    { code: "MT", name: "Montana" },
+    { code: "NE", name: "Nebraska" },
+    { code: "NV", name: "Nevada" },
+    { code: "NH", name: "New Hampshire" },
+    { code: "NJ", name: "New Jersey" },
+    { code: "NM", name: "New Mexico" },
+    { code: "NY", name: "New York" },
+    { code: "NC", name: "North Carolina" },
+    { code: "ND", name: "North Dakota" },
+    { code: "OH", name: "Ohio" },
+    { code: "OK", name: "Oklahoma" },
+    { code: "OR", name: "Oregon" },
+    { code: "PA", name: "Pennsylvania" },
+    { code: "RI", name: "Rhode Island" },
+    { code: "SC", name: "South Carolina" },
+    { code: "SD", name: "South Dakota" },
+    { code: "TN", name: "Tennessee" },
+    { code: "TX", name: "Texas" },
+    { code: "UT", name: "Utah" },
+    { code: "VT", name: "Vermont" },
+    { code: "VA", name: "Virginia" },
+    { code: "WA", name: "Washington" },
+    { code: "WV", name: "West Virginia" },
+    { code: "WI", name: "Wisconsin" },
+    { code: "WY", name: "Wyoming" },
+    { code: "DC", name: "District of Columbia" },
+    { code: "PR", name: "Puerto Rico" },
+    { code: "VI", name: "Virgin Islands" },
+    { code: "GU", name: "Guam" },
+    { code: "AS", name: "American Samoa" },
+    { code: "MP", name: "Northern Mariana Islands" }
+  ];
 
   const addGoverningLaw = () => {
     const newLaw: GoverningLaw = {
+      id: `law_${Date.now()}`,
       title: "",
       reference: "",
       description: ""
@@ -148,315 +146,486 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
     setGoverningLaws([...governingLaws, newLaw]);
   };
 
-  const updateGoverningLaw = (index: number, field: keyof GoverningLaw, value: string) => {
-    const updatedLaws = [...governingLaws];
-    updatedLaws[index] = { ...updatedLaws[index], [field]: value };
-    setGoverningLaws(updatedLaws);
+  const updateGoverningLaw = (id: string, field: keyof Omit<GoverningLaw, 'id'>, value: string) => {
+    setGoverningLaws(laws => laws.map(law => 
+      law.id === id ? { ...law, [field]: value } : law
+    ));
   };
 
-  const removeGoverningLaw = (index: number) => {
-    setGoverningLaws(governingLaws.filter((_, i) => i !== index));
+  const removeGoverningLaw = (id: string) => {
+    setGoverningLaws(laws => laws.filter(law => law.id !== id));
   };
 
-  const handleSave = () => {
-    if (!disasterName || !disasterType || declaredCounties.length === 0) {
-      toast({
-        title: "Missing Required Information",
-        description: "Please fill in disaster name, type, and at least one county.",
-        variant: "destructive"
-      });
-      return;
+  const addProgram = () => {
+    setAssistancePrograms([...assistancePrograms, {
+      name: "",
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false,
+      rules: ["rule_is_in_declared_area", "rule_passed_validations"]
+    }]);
+  };
+
+  const removeProgram = (index: number) => {
+    setAssistancePrograms(assistancePrograms.filter((_, i) => i !== index));
+  };
+
+  const updateProgram = (index: number, field: keyof AssistanceProgram, value: any) => {
+    const updated = [...assistancePrograms];
+    updated[index] = { ...updated[index], [field]: value };
+    setAssistancePrograms(updated);
+  };
+
+  const addRuleToProgram = (programIndex: number, rule: string) => {
+    const updated = [...assistancePrograms];
+    if (!updated[programIndex].rules.includes(rule)) {
+      updated[programIndex].rules.push(rule);
+      setAssistancePrograms(updated);
     }
+  };
 
-    console.log("Saving disaster configuration:", {
-      disasterName,
-      disasterType,
-      declaredCounties,
-      programs,
-      specialPolicies,
-      governingLaws
-    });
-
-    onSave();
+  const removeRuleFromProgram = (programIndex: number, ruleIndex: number) => {
+    const updated = [...assistancePrograms];
+    updated[programIndex].rules.splice(ruleIndex, 1);
+    setAssistancePrograms(updated);
   };
 
   return (
-    <div className="space-y-6">
-      {/* FEMA Header Banner */}
-      <div className="bg-gradient-to-r from-blue-800 via-blue-900 to-blue-800 text-white p-6 rounded-lg shadow-lg border-l-4 border-blue-400">
-        <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-            <AlertTriangle className="h-8 w-8 text-blue-800" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold">Federal Emergency Management Agency</h1>
-            <p className="text-blue-100">Disaster Relief Configuration System</p>
-          </div>
-        </div>
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-2">
+          <Plus className="h-5 w-5 text-green-500" />
+          <span>Configure New Disaster</span>
+        </CardTitle>
+        <CardDescription>
+          Set up comprehensive eligibility criteria and program parameters for a new disaster declaration
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="basic" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="basic">Basic Info</TabsTrigger>
+            <TabsTrigger value="programs">Assistance Programs</TabsTrigger>
+            <TabsTrigger value="provisions">Special Provisions</TabsTrigger>
+            <TabsTrigger value="review">Review & Save</TabsTrigger>
+          </TabsList>
 
-      {/* Basic Information */}
-      <Card className="border-2 border-blue-200 shadow-lg">
-        <CardHeader className="bg-blue-50">
-          <CardTitle className="text-blue-900">Basic Information</CardTitle>
-          <CardDescription className="text-blue-700">
-            Define the core details of the disaster declaration
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="disaster-name" className="text-blue-900 font-semibold">Disaster Name/ID *</Label>
-              <Input
-                id="disaster-name"
-                value={disasterName}
-                onChange={(e) => setDisasterName(e.target.value)}
-                placeholder="e.g., DR-4701-NY-Broome"
-                className="border-blue-300 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <Label htmlFor="disaster-type" className="text-blue-900 font-semibold">Disaster Type *</Label>
-              <Select value={disasterType} onValueChange={setDisasterType}>
-                <SelectTrigger className="border-blue-300 focus:border-blue-500">
-                  <SelectValue placeholder="Select disaster type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {DISASTER_TYPES.map((type) => (
-                    <SelectItem key={type} value={type.toLowerCase().replace(/\s+/g, '_').replace(/&/g, 'and')}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div>
-            <Label className="text-blue-900 font-semibold">Declared Counties *</Label>
-            <div className="flex space-x-2 mt-2">
-              <Input
-                value={countyInput}
-                onChange={(e) => setCountyInput(e.target.value)}
-                placeholder="Enter county name"
-                className="border-blue-300 focus:border-blue-500"
-                onKeyPress={(e) => e.key === 'Enter' && addCounty()}
-              />
-              <Button onClick={addCounty} className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {declaredCounties.map((county) => (
-                <Badge key={county} variant="secondary" className="bg-blue-100 text-blue-800">
-                  {county}
-                  <button
-                    onClick={() => removeCounty(county)}
-                    className="ml-2 text-blue-600 hover:text-blue-800"
-                  >
-                    ×
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Governing Laws and Regulations */}
-      <Card className="border-2 border-purple-200 shadow-lg">
-        <CardHeader className="bg-purple-50">
-          <CardTitle className="text-purple-900">Governing Laws and Regulations</CardTitle>
-          <CardDescription className="text-purple-700">
-            Legal framework and regulatory references for this disaster
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <Button onClick={addGoverningLaw} variant="outline" className="border-purple-300 text-purple-700 hover:bg-purple-50">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Governing Law
-          </Button>
-
-          {governingLaws.map((law, index) => (
-            <div key={index} className="border border-purple-200 rounded-lg p-4 space-y-3 bg-purple-25">
-              <div className="flex justify-between items-start">
-                <h4 className="font-semibold text-purple-900">Law #{index + 1}</h4>
-                <Button
-                  onClick={() => removeGoverningLaw(index)}
-                  size="sm"
-                  variant="outline"
-                  className="text-red-600 border-red-300 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+          <TabsContent value="basic" className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="disaster-id">Disaster Declaration ID</Label>
+                  <Input 
+                    id="disaster-id" 
+                    placeholder="DR-XXXX-ST-County"
+                    value={basicInfo.disasterId}
+                    onChange={(e) => setBasicInfo({...basicInfo, disasterId: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="disaster-name">Disaster Name</Label>
+                  <Input 
+                    id="disaster-name" 
+                    placeholder="e.g., Hurricane Milton"
+                    value={basicInfo.disasterName}
+                    onChange={(e) => setBasicInfo({...basicInfo, disasterName: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="state">Affected State</Label>
+                  <Select value={basicInfo.state} onValueChange={(value) => setBasicInfo({...basicInfo, state: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select state" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60 overflow-y-auto">
+                      {usStates.map(state => (
+                        <SelectItem key={state.code} value={state.code}>
+                          {state.name} ({state.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="disaster-start-date">Disaster Start Date</Label>
+                  <Input 
+                    id="disaster-start-date" 
+                    type="date"
+                    value={basicInfo.disasterStartDate}
+                    onChange={(e) => setBasicInfo({...basicInfo, disasterStartDate: e.target.value})}
+                  />
+                </div>
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div>
-                  <Label className="text-purple-900 font-medium">Title</Label>
-                  <Input
-                    value={law.title}
-                    onChange={(e) => updateGoverningLaw(index, 'title', e.target.value)}
-                    placeholder="e.g., Robert T. Stafford Disaster Relief and Emergency Assistance Act"
-                    className="border-purple-300 focus:border-purple-500"
+                  <Label htmlFor="disaster-type">Disaster Type</Label>
+                  <Select value={basicInfo.disasterType} onValueChange={(value) => setBasicInfo({...basicInfo, disasterType: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select disaster type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="hurricane">Hurricane</SelectItem>
+                      <SelectItem value="flooding">Flooding</SelectItem>
+                      <SelectItem value="wildfire">Wildfire</SelectItem>
+                      <SelectItem value="tornado">Tornado</SelectItem>
+                      <SelectItem value="severe_storms">Severe Storms</SelectItem>
+                      <SelectItem value="earthquake">Earthquake</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {basicInfo.disasterType === 'other' && (
+                  <div>
+                    <Label htmlFor="other-disaster-type">Specify Other Disaster Type</Label>
+                    <Input 
+                      id="other-disaster-type" 
+                      placeholder="Enter disaster type"
+                      value={basicInfo.otherDisasterType}
+                      onChange={(e) => setBasicInfo({...basicInfo, otherDisasterType: e.target.value})}
+                    />
+                  </div>
+                )}
+                <div>
+                  <Label htmlFor="deadline">Application Deadline</Label>
+                  <Input 
+                    id="deadline" 
+                    type="date"
+                    value={basicInfo.applicationDeadline}
+                    onChange={(e) => setBasicInfo({...basicInfo, applicationDeadline: e.target.value})}
                   />
                 </div>
-                
                 <div>
-                  <Label className="text-purple-900 font-medium">Legal Reference</Label>
-                  <Input
-                    value={law.reference}
-                    onChange={(e) => updateGoverningLaw(index, 'reference', e.target.value)}
-                    placeholder="e.g., 42 U.S.C. § 5121 et seq."
-                    className="border-purple-300 focus:border-purple-500"
-                  />
-                </div>
-                
-                <div>
-                  <Label className="text-purple-900 font-medium">Description</Label>
-                  <Textarea
-                    value={law.description}
-                    onChange={(e) => updateGoverningLaw(index, 'description', e.target.value)}
-                    placeholder="Brief description of how this law applies to the disaster response"
-                    className="border-purple-300 focus:border-purple-500"
+                  <Label htmlFor="counties">Declared Counties</Label>
+                  <Textarea 
+                    id="counties" 
+                    placeholder="List declared counties, separated by commas (e.g., Broome, Tioga, Chenango)"
                     rows={3}
+                    value={basicInfo.counties}
+                    onChange={(e) => setBasicInfo({...basicInfo, counties: e.target.value})}
                   />
                 </div>
               </div>
             </div>
-          ))}
-        </CardContent>
-      </Card>
 
-      {/* Assistance Programs */}
-      <Card className="border-2 border-green-200 shadow-lg">
-        <CardHeader className="bg-green-50">
-          <CardTitle className="text-green-900">Assistance Programs</CardTitle>
-          <CardDescription className="text-green-700">
-            Configure available assistance programs and their eligibility rules
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <Button onClick={addProgram} className="bg-green-600 hover:bg-green-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Program
-          </Button>
-
-          {programs.map((program, index) => (
-            <div key={index} className="border border-green-200 rounded-lg p-4 space-y-4 bg-green-25">
-              <div className="flex justify-between items-center">
-                <h4 className="font-semibold text-green-900">Program #{index + 1}</h4>
-                <Button
-                  onClick={() => removeProgram(index)}
-                  size="sm"
-                  variant="outline"
-                  className="text-red-600 border-red-300 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-green-900 font-medium">Program Name</Label>
-                  <Input
-                    value={program.name}
-                    onChange={(e) => updateProgram(index, 'name', e.target.value)}
-                    className="border-green-300 focus:border-green-500"
-                  />
+            {/* Governing Laws and Regulations Section */}
+            <Card className="border-l-4 border-l-purple-500">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="text-lg">Governing Laws and Regulations</CardTitle>
+                    <CardDescription>
+                      Add applicable federal and state laws that govern this disaster assistance
+                    </CardDescription>
+                  </div>
+                  <Button onClick={addGoverningLaw} variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Law
+                  </Button>
                 </div>
-                <div>
-                  <Label className="text-green-900 font-medium">Maximum Award ($)</Label>
-                  <Input
-                    type="number"
-                    value={program.max_award}
-                    onChange={(e) => updateProgram(index, 'max_award', parseFloat(e.target.value) || 0)}
-                    className="border-green-300 focus:border-green-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-green-900 font-medium">Eligibility Rules</Label>
-                <Select onValueChange={(rule) => addRuleToProgram(index, rule)}>
-                  <SelectTrigger className="border-green-300 focus:border-green-500">
-                    <SelectValue placeholder="Add eligibility rule" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {AVAILABLE_RULES.map((rule) => (
-                      <SelectItem key={rule} value={rule}>
-                        {rule.replace('rule_', '').replace(/_/g, ' ')}
-                      </SelectItem>
+              </CardHeader>
+              <CardContent>
+                {governingLaws.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No governing laws added yet. Click "Add Law" to get started.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {governingLaws.map((law) => (
+                      <div key={law.id} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1 grid md:grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor={`law-title-${law.id}`}>Law Title</Label>
+                              <Input
+                                id={`law-title-${law.id}`}
+                                placeholder="e.g., Stafford Act"
+                                value={law.title}
+                                onChange={(e) => updateGoverningLaw(law.id, 'title', e.target.value)}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor={`law-reference-${law.id}`}>Legal Reference</Label>
+                              <Input
+                                id={`law-reference-${law.id}`}
+                                placeholder="e.g., 42 U.S.C. § 5121"
+                                value={law.reference}
+                                onChange={(e) => updateGoverningLaw(law.id, 'reference', e.target.value)}
+                              />
+                            </div>
+                          </div>
+                          <Button
+                            onClick={() => removeGoverningLaw(law.id)}
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <div>
+                          <Label htmlFor={`law-description-${law.id}`}>Description/Relevance</Label>
+                          <Textarea
+                            id={`law-description-${law.id}`}
+                            placeholder="Describe how this law applies to the disaster assistance..."
+                            rows={2}
+                            value={law.description}
+                            onChange={(e) => updateGoverningLaw(law.id, 'description', e.target.value)}
+                          />
+                        </div>
+                      </div>
                     ))}
-                  </SelectContent>
-                </Select>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {program.rules.map((rule) => (
-                    <Badge key={rule} variant="outline" className="bg-green-100 text-green-800">
-                      {rule.replace('rule_', '').replace(/_/g, ' ')}
-                      <button
-                        onClick={() => removeRuleFromProgram(index, rule)}
-                        className="ml-2 text-green-600 hover:text-green-800"
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="programs" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Assistance Programs</h3>
+              <Button onClick={addProgram} variant="outline" size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Program
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              {assistancePrograms.map((program, index) => (
+                <Card key={index} className="border-l-4 border-l-blue-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1 grid md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor={`program-name-${index}`}>Program Name</Label>
+                          <Input
+                            id={`program-name-${index}`}
+                            placeholder="e.g., Serious Needs Assistance"
+                            value={program.name}
+                            onChange={(e) => updateProgram(index, 'name', e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor={`max-award-${index}`}>Maximum Award ($)</Label>
+                          <Input
+                            id={`max-award-${index}`}
+                            type="number"
+                            placeholder="0.00"
+                            value={program.maxAward}
+                            onChange={(e) => updateProgram(index, 'maxAward', parseFloat(e.target.value) || 0)}
+                          />
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => removeProgram(index)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-700"
                       >
-                        ×
-                      </button>
-                    </Badge>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex space-x-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={program.isExpedited}
+                          onChange={(e) => updateProgram(index, 'isExpedited', e.target.checked)}
+                        />
+                        <span className="text-sm">Expedited Processing</span>
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={program.inspectionWaived}
+                          onChange={(e) => updateProgram(index, 'inspectionWaived', e.target.checked)}
+                        />
+                        <span className="text-sm">Inspection Waived</span>
+                      </label>
+                    </div>
+
+                    <Collapsible>
+                      <CollapsibleTrigger className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800">
+                        Eligibility Rules ({program.rules.length})
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-2 space-y-2">
+                        <div className="flex flex-wrap gap-2">
+                          {program.rules.map((rule, ruleIndex) => (
+                            <div key={ruleIndex} className="flex items-center bg-gray-100 rounded px-2 py-1 text-xs">
+                              <span className="mr-2">{rule.replace('rule_', '').replace(/_/g, ' ')}</span>
+                              <button
+                                onClick={() => removeRuleFromProgram(index, ruleIndex)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                        <Select onValueChange={(value) => addRuleToProgram(index, value)}>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Add eligibility rule" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {availableRules.filter(rule => !program.rules.includes(rule)).map(rule => (
+                              <SelectItem key={rule} value={rule}>
+                                {rule.replace('rule_', '').replace(/_/g, ' ')}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="provisions" className="space-y-6">
+            <h3 className="text-lg font-semibold">Special Disaster Provisions</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="p-4">
+                <h4 className="font-semibold mb-3">Processing Enhancements</h4>
+                <div className="space-y-3">
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={specialProvisions.expeditedSNA}
+                      onChange={(e) => setSpecialProvisions({...specialProvisions, expeditedSNA: e.target.checked})}
+                    />
+                    <div>
+                      <span className="font-medium">Expedited Serious Needs Assistance</span>
+                      <p className="text-sm text-gray-600">Enable immediate assistance for urgent needs</p>
+                    </div>
+                  </label>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={specialProvisions.autoAdjudication}
+                      onChange={(e) => setSpecialProvisions({...specialProvisions, autoAdjudication: e.target.checked})}
+                    />
+                    <div>
+                      <span className="font-medium">Auto-Adjudication</span>
+                      <p className="text-sm text-gray-600">Automatically approve cases meeting all criteria</p>
+                    </div>
+                  </label>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={specialProvisions.geofenceActivated}
+                      onChange={(e) => setSpecialProvisions({...specialProvisions, geofenceActivated: e.target.checked})}
+                    />
+                    <div>
+                      <span className="font-medium">Geofence Validation</span>
+                      <p className="text-sm text-gray-600">Use GPS coordinates for area verification</p>
+                    </div>
+                  </label>
+                </div>
+              </Card>
+
+              <Card className="p-4">
+                <h4 className="font-semibold mb-3">Inspection Waivers</h4>
+                <div className="space-y-3">
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={specialProvisions.cleanSanitizeWaiver}
+                      onChange={(e) => setSpecialProvisions({...specialProvisions, cleanSanitizeWaiver: e.target.checked})}
+                    />
+                    <div>
+                      <span className="font-medium">Clean & Sanitize Waiver</span>
+                      <p className="text-sm text-gray-600">Waive inspection requirement for cleaning assistance</p>
+                    </div>
+                  </label>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={specialProvisions.displacementWaiver}
+                      onChange={(e) => setSpecialProvisions({...specialProvisions, displacementWaiver: e.target.checked})}
+                    />
+                    <div>
+                      <span className="font-medium">Displacement Assistance Waiver</span>
+                      <p className="text-sm text-gray-600">Waive inspection for temporary lodging assistance</p>
+                    </div>
+                  </label>
+                </div>
+                <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
+                  <div className="flex items-start space-x-2">
+                    <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
+                    <div className="text-sm">
+                      <p className="font-medium text-yellow-800">Important Note</p>
+                      <p className="text-yellow-700">Inspection waivers should only be used when disaster conditions make inspections impractical or unsafe.</p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="review" className="space-y-6">
+            <h3 className="text-lg font-semibold">Configuration Review</h3>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Basic Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p><strong>Disaster ID:</strong> {basicInfo.disasterId || "Not specified"}</p>
+                <p><strong>Name:</strong> {basicInfo.disasterName || "Not specified"}</p>
+                <p><strong>State:</strong> {basicInfo.state ? usStates.find(s => s.code === basicInfo.state)?.name : "Not specified"}</p>
+                <p><strong>Counties:</strong> {basicInfo.counties || "Not specified"}</p>
+                <p><strong>Type:</strong> {basicInfo.disasterType === 'other' ? basicInfo.otherDisasterType : basicInfo.disasterType || "Not specified"}</p>
+                <p><strong>Start Date:</strong> {basicInfo.disasterStartDate || "Not specified"}</p>
+                <p><strong>Application Deadline:</strong> {basicInfo.applicationDeadline || "Not specified"}</p>
+                {governingLaws.length > 0 && (
+                  <div>
+                    <strong>Governing Laws ({governingLaws.length}):</strong>
+                    <ul className="list-disc list-inside ml-4 mt-1">
+                      {governingLaws.map(law => (
+                        <li key={law.id} className="text-sm">
+                          {law.title} {law.reference && `(${law.reference})`}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Assistance Programs ({assistancePrograms.length})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {assistancePrograms.map((program, index) => (
+                    <div key={index} className="border-l-2 border-blue-500 pl-3">
+                      <p className="font-medium">{program.name || `Program ${index + 1}`}</p>
+                      <p className="text-sm text-gray-600">Max Award: ${program.maxAward}</p>
+                      <p className="text-sm text-gray-600">Rules: {program.rules.length} configured</p>
+                      {(program.isExpedited || program.inspectionWaived) && (
+                        <p className="text-sm text-green-600">
+                          Special: {program.isExpedited ? "Expedited" : ""} {program.inspectionWaived ? "Inspection Waived" : ""}
+                        </p>
+                      )}
+                    </div>
                   ))}
                 </div>
-              </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex space-x-4 pt-6">
+              <Button onClick={onSave} className="bg-green-600 hover:bg-green-700">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Save Disaster Configuration
+              </Button>
+              <Button variant="outline">Save as Draft</Button>
             </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {/* Special Policies */}
-      <Card className="border-2 border-orange-200 shadow-lg">
-        <CardHeader className="bg-orange-50">
-          <CardTitle className="text-orange-900">Special Policies</CardTitle>
-          <CardDescription className="text-orange-700">
-            Define special provisions and policy exceptions for this disaster
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4 pt-6">
-          <div className="flex space-x-2">
-            <Input
-              value={policyInput}
-              onChange={(e) => setPolicyInput(e.target.value)}
-              placeholder="Enter special policy or provision"
-              className="border-orange-300 focus:border-orange-500"
-              onKeyPress={(e) => e.key === 'Enter' && addSpecialPolicy()}
-            />
-            <Button onClick={addSpecialPolicy} className="bg-orange-600 hover:bg-orange-700">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          <div className="space-y-2">
-            {specialPolicies.map((policy, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <span className="text-orange-900">{policy}</span>
-                <Button
-                  onClick={() => removeSpecialPolicy(policy)}
-                  size="sm"
-                  variant="outline"
-                  className="text-red-600 border-red-300 hover:bg-red-50"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Save Button */}
-      <div className="flex justify-end space-x-4">
-        <Button onClick={handleSave} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8">
-          <Save className="h-5 w-5 mr-2" />
-          Save Disaster Configuration
-        </Button>
-      </div>
-    </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 };
 
