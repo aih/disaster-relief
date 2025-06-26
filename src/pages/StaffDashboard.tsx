@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -9,6 +8,7 @@ import PolicyManagement from "@/components/staff/PolicyManagement";
 import CaseManagement from "@/components/staff/CaseManagement";
 import VerificationWorkflow from "@/components/staff/VerificationWorkflow";
 import DocumentProcessing from "@/components/staff/DocumentProcessing";
+import PolicyCreation from "@/components/staff/PolicyCreation";
 
 const StaffDashboard = () => {
   const { toast } = useToast();
@@ -31,9 +31,10 @@ const StaffDashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="disasters" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="disasters">Active Disasters</TabsTrigger>
             <TabsTrigger value="configure">Configure New Disaster</TabsTrigger>
+            <TabsTrigger value="create-policy">Create Policy</TabsTrigger>
             <TabsTrigger value="policies">Policy Management</TabsTrigger>
             <TabsTrigger value="cases">Case Management</TabsTrigger>
             <TabsTrigger value="verification">Verification</TabsTrigger>
@@ -46,6 +47,10 @@ const StaffDashboard = () => {
 
           <TabsContent value="configure">
             <ConfigureDisaster onSave={handleSaveDisaster} />
+          </TabsContent>
+
+          <TabsContent value="create-policy">
+            <PolicyCreation />
           </TabsContent>
 
           <TabsContent value="policies">
