@@ -26,7 +26,7 @@ const GoverningItemsManager = ({ items, onItemsChange }: GoverningItemsManagerPr
 
   return (
     <div>
-      <Label htmlFor="governing-items">Governing Laws, Regulations and Policies</Label>
+      <Label htmlFor="governing-items">Title and Reference</Label>
       <div className="space-y-2">
         <div className="flex space-x-2">
           <Input 
