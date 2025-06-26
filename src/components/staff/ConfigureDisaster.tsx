@@ -136,6 +136,38 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
     { code: "MP", name: "Northern Mariana Islands" }
   ];
 
+  const disasterTypes = [
+    "All Hazards",
+    "Attacks in Public Places",
+    "Avalanche",
+    "Biohazard Exposure",
+    "Chemicals and Hazardous Materials Incidents",
+    "Cybersecurity",
+    "Drought",
+    "Earthquakes",
+    "Emergency Alerts",
+    "Explosions",
+    "Extreme Heat",
+    "Floods",
+    "Home Fires",
+    "Home Safety",
+    "Household Chemical Emergencies",
+    "Hurricanes",
+    "Landslides & Debris Flow",
+    "Pandemic",
+    "Power Outages",
+    "Radiation Emergencies",
+    "Severe Weather",
+    "Space Weather",
+    "Thunderstorms & Lightning",
+    "Tornadoes",
+    "Tsunamis",
+    "Volcanoes",
+    "Wildfires",
+    "Winter Weather",
+    "Other"
+  ];
+
   const addGoverningLaw = () => {
     const newLaw: GoverningLaw = {
       id: `law_${Date.now()}`,
@@ -264,14 +296,12 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                     <SelectTrigger>
                       <SelectValue placeholder="Select disaster type" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="hurricane">Hurricane</SelectItem>
-                      <SelectItem value="flooding">Flooding</SelectItem>
-                      <SelectItem value="wildfire">Wildfire</SelectItem>
-                      <SelectItem value="tornado">Tornado</SelectItem>
-                      <SelectItem value="severe_storms">Severe Storms</SelectItem>
-                      <SelectItem value="earthquake">Earthquake</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                    <SelectContent className="max-h-60 overflow-y-auto">
+                      {disasterTypes.map(type => (
+                        <SelectItem key={type} value={type.toLowerCase().replace(/\s+/g, '_').replace(/&/g, 'and')}>
+                          {type}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
