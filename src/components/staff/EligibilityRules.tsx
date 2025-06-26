@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, FileText, CheckCircle } from "lucide-react";
+import { Plus, Trash2, FileText, CheckCircle, Search, Filter } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface EligibilityRule {
   id: string;
@@ -32,6 +33,27 @@ const EligibilityRules = () => {
       name: "Passed Validations",
       description: "Applicant has passed all required identity and eligibility validations",
       plainLanguage: "You must provide valid identification and meet basic eligibility requirements for disaster assistance.",
+      ruleType: "validation",
+    },
+    {
+      id: "rule_is_in_geofence",
+      name: "Is in Geofence",
+      description: "Applicant's location is within the GPS-defined disaster boundary",
+      plainLanguage: "Your address must be within the specific geographic area affected by the disaster.",
+      ruleType: "location",
+    },
+    {
+      id: "rule_reported_immediate_need",
+      name: "Reported Immediate Need",
+      description: "Applicant has reported urgent immediate needs for assistance",
+      plainLanguage: "You must have urgent needs that require immediate assistance, such as lack of shelter, food, or water.",
+      ruleType: "condition",
+    },
+    {
+      id: "rule_inspection_found_minor_damage",
+      name: "Inspection Found Minor Damage",
+      description: "Property inspection confirmed minor damage requiring assistance",
+      plainLanguage: "An inspector must have visited your property and confirmed that you have damage that qualifies for assistance.",
       ruleType: "validation",
     },
     {
@@ -64,6 +86,44 @@ const EligibilityRules = () => {
       plainLanguage: "Your vehicle must have been legally registered and had active insurance when the disaster occurred.",
       ruleType: "documentation",
       requiredDocuments: ["Vehicle registration", "Insurance policy documents", "Insurance declaration page"]
+    },
+    {
+      id: "rule_has_insurance_settlement_info",
+      name: "Has Insurance Settlement Info",
+      description: "Insurance settlement or denial documentation must be provided",
+      plainLanguage: "You must provide documentation showing what your insurance company paid or why they denied your claim.",
+      ruleType: "documentation",
+      requiredDocuments: ["Insurance settlement letter", "Insurance denial letter", "Adjuster report"]
+    },
+    {
+      id: "rule_has_repair_bill",
+      name: "Has Repair Bill",
+      description: "Documentation of vehicle repair costs must be provided",
+      plainLanguage: "You must provide receipts or estimates showing the cost to repair your vehicle.",
+      ruleType: "documentation",
+      requiredDocuments: ["Repair shop estimate", "Itemized repair invoice", "Before/after photos"]
+    },
+    {
+      id: "rule_has_replacement_proof",
+      name: "Has Replacement Proof",
+      description: "Documentation proving vehicle replacement is necessary",
+      plainLanguage: "You must provide proof that your vehicle cannot be repaired and needs to be replaced.",
+      ruleType: "documentation",
+      requiredDocuments: ["Total loss declaration", "Salvage title", "Insurance adjuster report stating total loss"]
+    },
+    {
+      id: "rule_is_responsible_for_funeral",
+      name: "Is Responsible for Funeral",
+      description: "Applicant must be legally responsible for funeral expenses",
+      plainLanguage: "You must be the person legally responsible for paying the funeral costs of the deceased.",
+      ruleType: "condition",
+    },
+    {
+      id: "rule_death_caused_by_disaster",
+      name: "Death Caused by Disaster",
+      description: "The death must be directly attributable to the declared disaster",
+      plainLanguage: "The person's death must have been directly caused by the disaster or its immediate effects.",
+      ruleType: "condition",
     }
   ]);
 
@@ -76,9 +136,42 @@ const EligibilityRules = () => {
   });
 
   const [isAddingRule, setIsAddingRule] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [validationError, setValidationError] = useState("");
+
+  const validateRuleName = (name: string, ruleType: string) => {
+    const startsWithHas = name.toLowerCase().startsWith('has');
+    
+    if (startsWithHas && ruleType !== 'documentation') {
+      return "Rule names starting with 'Has' must be Documentation type rules";
+    }
+    
+    if (ruleType === 'documentation' && !startsWithHas) {
+      return "Documentation rules must start with 'Has'";
+    }
+    
+    return "";
+  };
+
+  const filteredRules = rules.filter(rule => {
+    const matchesSearch = rule.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         rule.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         rule.plainLanguage.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesType = filterType === "all" || rule.ruleType === filterType;
+    
+    return matchesSearch && matchesType;
+  });
 
   const addRule = () => {
     if (newRule.name && newRule.description && newRule.plainLanguage) {
+      const validation = validateRuleName(newRule.name, newRule.ruleType || 'validation');
+      if (validation) {
+        setValidationError(validation);
+        return;
+      }
+
       const rule: EligibilityRule = {
         id: `rule_${newRule.name?.toLowerCase().replace(/\s+/g, '_')}`,
         name: newRule.name,
@@ -96,6 +189,7 @@ const EligibilityRules = () => {
         requiredDocuments: []
       });
       setIsAddingRule(false);
+      setValidationError("");
     }
   };
 
@@ -128,6 +222,16 @@ const EligibilityRules = () => {
     }
   };
 
+  const getPlaceholderText = (ruleType: string) => {
+    switch (ruleType) {
+      case 'documentation': return 'e.g., Has Insurance Documentation';
+      case 'location': return 'e.g., Is in Affected Area';
+      case 'condition': return 'e.g., Is Primary Residence';
+      case 'validation': return 'e.g., Passed Identity Check';
+      default: return 'Enter rule name';
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -140,12 +244,40 @@ const EligibilityRules = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Current Eligibility Rules</h3>
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <h3 className="text-lg font-semibold">Current Eligibility Rules ({filteredRules.length})</h3>
           <Button onClick={() => setIsAddingRule(true)} variant="outline" size="sm">
             <Plus className="h-4 w-4 mr-2" />
             Add New Rule
           </Button>
+        </div>
+
+        {/* Filter Controls */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search rules by name, description, or plain language..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-gray-500" />
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="validation">Validation</SelectItem>
+                <SelectItem value="location">Location</SelectItem>
+                <SelectItem value="documentation">Documentation</SelectItem>
+                <SelectItem value="condition">Condition</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {isAddingRule && (
@@ -159,10 +291,19 @@ const EligibilityRules = () => {
                   <Label htmlFor="rule-name">Rule Name</Label>
                   <Input
                     id="rule-name"
-                    placeholder="e.g., Has Insurance Documentation"
+                    placeholder={getPlaceholderText(newRule.ruleType || 'validation')}
                     value={newRule.name}
-                    onChange={(e) => setNewRule({ ...newRule, name: e.target.value })}
+                    onChange={(e) => {
+                      setNewRule({ ...newRule, name: e.target.value });
+                      if (validationError) {
+                        const error = validateRuleName(e.target.value, newRule.ruleType || 'validation');
+                        setValidationError(error);
+                      }
+                    }}
                   />
+                  {validationError && (
+                    <p className="text-sm text-red-600 mt-1">{validationError}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="rule-type">Rule Type</Label>
@@ -170,7 +311,14 @@ const EligibilityRules = () => {
                     id="rule-type"
                     className="w-full p-2 border rounded-md"
                     value={newRule.ruleType}
-                    onChange={(e) => setNewRule({ ...newRule, ruleType: e.target.value as any })}
+                    onChange={(e) => {
+                      const newType = e.target.value as any;
+                      setNewRule({ ...newRule, ruleType: newType });
+                      if (newRule.name) {
+                        const error = validateRuleName(newRule.name, newType);
+                        setValidationError(error);
+                      }
+                    }}
                   >
                     <option value="validation">Validation</option>
                     <option value="location">Location</option>
@@ -245,11 +393,11 @@ const EligibilityRules = () => {
               )}
 
               <div className="flex space-x-2">
-                <Button onClick={addRule} size="sm">
+                <Button onClick={addRule} size="sm" disabled={!!validationError}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add Rule
                 </Button>
-                <Button onClick={() => setIsAddingRule(false)} variant="outline" size="sm">
+                <Button onClick={() => { setIsAddingRule(false); setValidationError(""); }} variant="outline" size="sm">
                   Cancel
                 </Button>
               </div>
@@ -258,7 +406,7 @@ const EligibilityRules = () => {
         )}
 
         <div className="space-y-4">
-          {rules.map((rule) => (
+          {filteredRules.map((rule) => (
             <Card key={rule.id} className="border-l-4 border-l-blue-500">
               <CardContent className="p-4">
                 <div className="flex justify-between items-start mb-3">
@@ -316,6 +464,12 @@ const EligibilityRules = () => {
             </Card>
           ))}
         </div>
+
+        {filteredRules.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No rules match your search criteria.</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

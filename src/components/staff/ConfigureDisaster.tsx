@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,6 +29,7 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
     counties: "",
     disasterType: "",
     applicationDeadline: "",
+    disasterStartDate: "",
   });
 
   const [assistancePrograms, setAssistancePrograms] = useState<AssistanceProgram[]>([
@@ -65,6 +65,65 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
     "rule_death_caused_by_disaster",
     "rule_has_death_certificate",
     "rule_has_funeral_bill"
+  ];
+
+  const usStates = [
+    { code: "AL", name: "Alabama" },
+    { code: "AK", name: "Alaska" },
+    { code: "AZ", name: "Arizona" },
+    { code: "AR", name: "Arkansas" },
+    { code: "CA", name: "California" },
+    { code: "CO", name: "Colorado" },
+    { code: "CT", name: "Connecticut" },
+    { code: "DE", name: "Delaware" },
+    { code: "FL", name: "Florida" },
+    { code: "GA", name: "Georgia" },
+    { code: "HI", name: "Hawaii" },
+    { code: "ID", name: "Idaho" },
+    { code: "IL", name: "Illinois" },
+    { code: "IN", name: "Indiana" },
+    { code: "IA", name: "Iowa" },
+    { code: "KS", name: "Kansas" },
+    { code: "KY", name: "Kentucky" },
+    { code: "LA", name: "Louisiana" },
+    { code: "ME", name: "Maine" },
+    { code: "MD", name: "Maryland" },
+    { code: "MA", name: "Massachusetts" },
+    { code: "MI", name: "Michigan" },
+    { code: "MN", name: "Minnesota" },
+    { code: "MS", name: "Mississippi" },
+    { code: "MO", name: "Missouri" },
+    { code: "MT", name: "Montana" },
+    { code: "NE", name: "Nebraska" },
+    { code: "NV", name: "Nevada" },
+    { code: "NH", name: "New Hampshire" },
+    { code: "NJ", name: "New Jersey" },
+    { code: "NM", name: "New Mexico" },
+    { code: "NY", name: "New York" },
+    { code: "NC", name: "North Carolina" },
+    { code: "ND", name: "North Dakota" },
+    { code: "OH", name: "Ohio" },
+    { code: "OK", name: "Oklahoma" },
+    { code: "OR", name: "Oregon" },
+    { code: "PA", name: "Pennsylvania" },
+    { code: "RI", name: "Rhode Island" },
+    { code: "SC", name: "South Carolina" },
+    { code: "SD", name: "South Dakota" },
+    { code: "TN", name: "Tennessee" },
+    { code: "TX", name: "Texas" },
+    { code: "UT", name: "Utah" },
+    { code: "VT", name: "Vermont" },
+    { code: "VA", name: "Virginia" },
+    { code: "WA", name: "Washington" },
+    { code: "WV", name: "West Virginia" },
+    { code: "WI", name: "Wisconsin" },
+    { code: "WY", name: "Wyoming" },
+    { code: "DC", name: "District of Columbia" },
+    { code: "PR", name: "Puerto Rico" },
+    { code: "VI", name: "Virgin Islands" },
+    { code: "GU", name: "Guam" },
+    { code: "AS", name: "American Samoa" },
+    { code: "MP", name: "Northern Mariana Islands" }
   ];
 
   const addProgram = () => {
@@ -148,14 +207,23 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                     <SelectTrigger>
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="NY">New York</SelectItem>
-                      <SelectItem value="FL">Florida</SelectItem>
-                      <SelectItem value="TX">Texas</SelectItem>
-                      <SelectItem value="CA">California</SelectItem>
-                      <SelectItem value="LA">Louisiana</SelectItem>
+                    <SelectContent className="max-h-60 overflow-y-auto">
+                      {usStates.map(state => (
+                        <SelectItem key={state.code} value={state.code}>
+                          {state.name} ({state.code})
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+                </div>
+                <div>
+                  <Label htmlFor="disaster-start-date">Disaster Start Date</Label>
+                  <Input 
+                    id="disaster-start-date" 
+                    type="date"
+                    value={basicInfo.disasterStartDate}
+                    onChange={(e) => setBasicInfo({...basicInfo, disasterStartDate: e.target.value})}
+                  />
                 </div>
               </div>
               
@@ -393,10 +461,11 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
               <CardContent className="space-y-2">
                 <p><strong>Disaster ID:</strong> {basicInfo.disasterId || "Not specified"}</p>
                 <p><strong>Name:</strong> {basicInfo.disasterName || "Not specified"}</p>
-                <p><strong>State:</strong> {basicInfo.state || "Not specified"}</p>
+                <p><strong>State:</strong> {basicInfo.state ? usStates.find(s => s.code === basicInfo.state)?.name : "Not specified"}</p>
                 <p><strong>Counties:</strong> {basicInfo.counties || "Not specified"}</p>
                 <p><strong>Type:</strong> {basicInfo.disasterType || "Not specified"}</p>
-                <p><strong>Deadline:</strong> {basicInfo.applicationDeadline || "Not specified"}</p>
+                <p><strong>Start Date:</strong> {basicInfo.disasterStartDate || "Not specified"}</p>
+                <p><strong>Application Deadline:</strong> {basicInfo.applicationDeadline || "Not specified"}</p>
               </CardContent>
             </Card>
 
