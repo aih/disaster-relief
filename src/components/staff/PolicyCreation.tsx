@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { FileCode, Wand2, CheckCircle, AlertCircle, Download } from "lucide-react";
+import { FileCode, Wand2, CheckCircle, AlertCircle, Download, Plus, X } from "lucide-react";
 import PolicyTextProcessor from "./PolicyTextProcessor";
 import PolicyPreview from "./PolicyPreview";
 import PolicyCodeGenerator from "./PolicyCodeGenerator";
@@ -24,8 +24,70 @@ const PolicyCreation = () => {
     disasterType: "",
     plainTextPolicy: "",
     structuredPolicy: null as any,
-    generatedCode: ""
+    generatedCode: "",
+    governingItems: [] as string[]
   });
+
+  const [newGoverningItem, setNewGoverningItem] = useState("");
+
+  const usStates = [
+    { code: "AL", name: "Alabama" },
+    { code: "AK", name: "Alaska" },
+    { code: "AZ", name: "Arizona" },
+    { code: "AR", name: "Arkansas" },
+    { code: "CA", name: "California" },
+    { code: "CO", name: "Colorado" },
+    { code: "CT", name: "Connecticut" },
+    { code: "DE", name: "Delaware" },
+    { code: "FL", name: "Florida" },
+    { code: "GA", name: "Georgia" },
+    { code: "HI", name: "Hawaii" },
+    { code: "ID", name: "Idaho" },
+    { code: "IL", name: "Illinois" },
+    { code: "IN", name: "Indiana" },
+    { code: "IA", name: "Iowa" },
+    { code: "KS", name: "Kansas" },
+    { code: "KY", name: "Kentucky" },
+    { code: "LA", name: "Louisiana" },
+    { code: "ME", name: "Maine" },
+    { code: "MD", name: "Maryland" },
+    { code: "MA", name: "Massachusetts" },
+    { code: "MI", name: "Michigan" },
+    { code: "MN", name: "Minnesota" },
+    { code: "MS", name: "Mississippi" },
+    { code: "MO", name: "Missouri" },
+    { code: "MT", name: "Montana" },
+    { code: "NE", name: "Nebraska" },
+    { code: "NV", name: "Nevada" },
+    { code: "NH", name: "New Hampshire" },
+    { code: "NJ", name: "New Jersey" },
+    { code: "NM", name: "New Mexico" },
+    { code: "NY", name: "New York" },
+    { code: "NC", name: "North Carolina" },
+    { code: "ND", name: "North Dakota" },
+    { code: "OH", name: "Ohio" },
+    { code: "OK", name: "Oklahoma" },
+    { code: "OR", name: "Oregon" },
+    { code: "PA", name: "Pennsylvania" },
+    { code: "RI", name: "Rhode Island" },
+    { code: "SC", name: "South Carolina" },
+    { code: "SD", name: "South Dakota" },
+    { code: "TN", name: "Tennessee" },
+    { code: "TX", name: "Texas" },
+    { code: "UT", name: "Utah" },
+    { code: "VT", name: "Vermont" },
+    { code: "VA", name: "Virginia" },
+    { code: "WA", name: "Washington" },
+    { code: "WV", name: "West Virginia" },
+    { code: "WI", name: "Wisconsin" },
+    { code: "WY", name: "Wyoming" },
+    { code: "DC", name: "District of Columbia" },
+    { code: "PR", name: "Puerto Rico" },
+    { code: "VI", name: "U.S. Virgin Islands" },
+    { code: "GU", name: "Guam" },
+    { code: "AS", name: "American Samoa" },
+    { code: "MP", name: "Northern Mariana Islands" }
+  ];
 
   const handleProcessText = (processedPolicy: any) => {
     setPolicyData(prev => ({ ...prev, structuredPolicy: processedPolicy }));
@@ -41,7 +103,7 @@ const PolicyCreation = () => {
     setCurrentStep("code");
     toast({
       title: "Policy Code Generated",
-      description: "Python policy file has been generated successfully.",
+      description: "Policy file has been generated successfully.",
     });
   };
 
@@ -52,6 +114,23 @@ const PolicyCreation = () => {
     });
   };
 
+  const addGoverningItem = () => {
+    if (newGoverningItem.trim()) {
+      setPolicyData(prev => ({
+        ...prev,
+        governingItems: [...prev.governingItems, newGoverningItem.trim()]
+      }));
+      setNewGoverningItem("");
+    }
+  };
+
+  const removeGoverningItem = (index: number) => {
+    setPolicyData(prev => ({
+      ...prev,
+      governingItems: prev.governingItems.filter((_, i) => i !== index)
+    }));
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -60,14 +139,14 @@ const PolicyCreation = () => {
           <span>AI-Assisted Policy Creation Portal</span>
         </CardTitle>
         <CardDescription>
-          Transform plain-language policy documents into executable policy.py files using our AI-powered framework
+          Transform plain-language policy documents into executable policy files using our AI-powered framework
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="mb-6 p-4 bg-blue-50 rounded-lg">
           <h3 className="font-semibold text-blue-900 mb-2">How the Policy Engine Works</h3>
           <div className="text-sm text-blue-800 space-y-2">
-            <p>• <strong>Configuration as Code:</strong> Each disaster policy is a Python module (policy.py) with eligibility rules</p>
+            <p>• <strong>Configuration as Code:</strong> Each disaster policy is a structured module with eligibility rules</p>
             <p>• <strong>Reusable Rules:</strong> Common rules like "is in declared area" are shared across all policies</p>
             <p>• <strong>Dynamic Loading:</strong> New policies are automatically discovered without system changes</p>
             <p>• <strong>AI Translation:</strong> Plain text policy documents are converted to structured code using LLMs</p>
@@ -121,10 +200,11 @@ const PolicyCreation = () => {
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="NY">New York</SelectItem>
-                      <SelectItem value="FL">Florida</SelectItem>
-                      <SelectItem value="TX">Texas</SelectItem>
-                      <SelectItem value="CA">California</SelectItem>
+                      {usStates.map((state) => (
+                        <SelectItem key={state.code} value={state.code}>
+                          {state.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -151,8 +231,49 @@ const PolicyCreation = () => {
                       <SelectItem value="wildfire">Wildfire</SelectItem>
                       <SelectItem value="tornado">Tornado</SelectItem>
                       <SelectItem value="severe_storms">Severe Storms</SelectItem>
+                      <SelectItem value="earthquake">Earthquake</SelectItem>
+                      <SelectItem value="drought">Drought</SelectItem>
+                      <SelectItem value="winter_storm">Winter Storm</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div>
+                  <Label htmlFor="governing-items">Governing Laws, Regulations and Policies</Label>
+                  <div className="space-y-2">
+                    <div className="flex space-x-2">
+                      <Input 
+                        placeholder="Add law, regulation, or policy reference"
+                        value={newGoverningItem}
+                        onChange={(e) => setNewGoverningItem(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && addGoverningItem()}
+                      />
+                      <Button 
+                        type="button" 
+                        onClick={addGoverningItem}
+                        size="sm"
+                        disabled={!newGoverningItem.trim()}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {policyData.governingItems.length > 0 && (
+                      <div className="space-y-1">
+                        {policyData.governingItems.map((item, index) => (
+                          <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                            <span className="text-sm">{item}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeGoverningItem(index)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
