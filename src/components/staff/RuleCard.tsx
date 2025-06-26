@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trash2, FileText } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import DocumentationManager from "./DocumentationManager";
 
 interface EligibilityRule {
   id: string;
@@ -12,14 +13,17 @@ interface EligibilityRule {
   plainLanguage: string;
   ruleType: 'validation' | 'location' | 'documentation' | 'condition';
   requiredDocuments?: string[];
+  linkedDocumentationRules?: string[];
 }
 
 interface RuleCardProps {
   rule: EligibilityRule;
   onRemove: (id: string) => void;
+  onUpdateRule: (updatedRule: EligibilityRule) => void;
+  allRules: EligibilityRule[];
 }
 
-const RuleCard = ({ rule, onRemove }: RuleCardProps) => {
+const RuleCard = ({ rule, onRemove, onUpdateRule, allRules }: RuleCardProps) => {
   const getRuleTypeColor = (type: string) => {
     switch (type) {
       case 'validation': return 'bg-blue-100 text-blue-800';
@@ -29,6 +33,8 @@ const RuleCard = ({ rule, onRemove }: RuleCardProps) => {
       default: return 'bg-gray-100 text-gray-800';
     }
   };
+
+  const documentationRules = allRules.filter(r => r.ruleType === 'documentation');
 
   return (
     <Card className="border-l-4 border-l-blue-500">
@@ -61,7 +67,7 @@ const RuleCard = ({ rule, onRemove }: RuleCardProps) => {
             <p className="text-sm text-gray-800 italic">"{rule.plainLanguage}"</p>
           </div>
 
-          {rule.requiredDocuments && rule.requiredDocuments.length > 0 && (
+          {rule.ruleType === 'documentation' && rule.requiredDocuments && rule.requiredDocuments.length > 0 && (
             <Collapsible>
               <CollapsibleTrigger className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800">
                 <FileText className="h-4 w-4 mr-1" />
@@ -80,6 +86,12 @@ const RuleCard = ({ rule, onRemove }: RuleCardProps) => {
             </Collapsible>
           )}
         </div>
+
+        <DocumentationManager
+          rule={rule}
+          documentationRules={documentationRules}
+          onUpdateRule={onUpdateRule}
+        />
 
         <div className="mt-3 pt-3 border-t">
           <p className="text-xs text-gray-500">Rule ID: <code className="bg-gray-100 px-1 rounded">{rule.id}</code></p>

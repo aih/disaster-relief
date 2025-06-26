@@ -13,6 +13,7 @@ interface EligibilityRule {
   plainLanguage: string;
   ruleType: 'validation' | 'location' | 'documentation' | 'condition';
   requiredDocuments?: string[];
+  linkedDocumentationRules?: string[];
 }
 
 const EligibilityRules = () => {
@@ -30,7 +31,7 @@ const EligibilityRules = () => {
       description: "Applicant has passed all required identity and eligibility validations",
       plainLanguage: "You must provide valid identification and meet basic eligibility requirements for disaster assistance.",
       ruleType: "validation",
-      requiredDocuments: ["Government-issued photo ID", "Social Security card or verification", "Proof of address"]
+      linkedDocumentationRules: ["rule_has_identity_documents"]
     },
     {
       id: "rule_is_in_geofence",
@@ -52,6 +53,22 @@ const EligibilityRules = () => {
       description: "Property inspection confirmed minor damage requiring assistance",
       plainLanguage: "An inspector must have visited your property and confirmed that you have damage that qualifies for assistance.",
       ruleType: "validation",
+      linkedDocumentationRules: ["rule_has_inspection_documentation"]
+    },
+    {
+      id: "rule_has_identity_documents",
+      name: "Has Identity Documents",
+      description: "Required identity and eligibility verification documents must be provided",
+      plainLanguage: "You must provide valid identification and proof of address to verify your identity.",
+      ruleType: "documentation",
+      requiredDocuments: ["Government-issued photo ID", "Social Security card or verification", "Proof of address"]
+    },
+    {
+      id: "rule_has_inspection_documentation",
+      name: "Has Inspection Documentation",
+      description: "Property damage inspection documentation must be provided",
+      plainLanguage: "You must provide official documentation showing the damage to your property has been inspected.",
+      ruleType: "documentation",
       requiredDocuments: ["Inspector report", "Damage assessment photos", "Property ownership documentation"]
     },
     {
@@ -76,6 +93,14 @@ const EligibilityRules = () => {
       description: "The damaged vehicle must be the applicant's only means of transportation",
       plainLanguage: "The damaged vehicle must be your only working vehicle that you depend on for transportation.",
       ruleType: "condition",
+      linkedDocumentationRules: ["rule_has_vehicle_ownership_proof"]
+    },
+    {
+      id: "rule_has_vehicle_ownership_proof",
+      name: "Has Vehicle Ownership Proof",
+      description: "Vehicle ownership and sole vehicle status documentation must be provided",
+      plainLanguage: "You must provide proof that you own the vehicle and that it's your only means of transportation.",
+      ruleType: "documentation",
       requiredDocuments: ["Vehicle registration", "Affidavit of sole vehicle ownership"]
     },
     {
@@ -151,6 +176,10 @@ const EligibilityRules = () => {
     setRules(rules.filter(rule => rule.id !== id));
   };
 
+  const updateRule = (updatedRule: EligibilityRule) => {
+    setRules(rules.map(rule => rule.id === updatedRule.id ? updatedRule : rule));
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -191,6 +220,8 @@ const EligibilityRules = () => {
               key={rule.id}
               rule={rule}
               onRemove={removeRule}
+              onUpdateRule={updateRule}
+              allRules={rules}
             />
           ))}
         </div>

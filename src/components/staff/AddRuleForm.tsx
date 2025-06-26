@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -56,7 +55,7 @@ const AddRuleForm = ({ onAdd, onCancel }: AddRuleFormProps) => {
   };
 
   const canHaveDocuments = (ruleType: string) => {
-    return ruleType === 'documentation' || ruleType === 'validation' || ruleType === 'condition';
+    return ruleType === 'documentation';
   };
 
   const addRule = () => {
@@ -178,7 +177,7 @@ const AddRuleForm = ({ onAdd, onCancel }: AddRuleFormProps) => {
 
         {canHaveDocuments(newRule.ruleType || 'validation') && (
           <div>
-            <Label>Required Documents {newRule.ruleType !== 'documentation' && <span className="text-sm text-gray-500">(optional)</span>}</Label>
+            <Label>Required Documents</Label>
             <div className="space-y-2">
               {newRule.requiredDocuments?.map((doc, index) => (
                 <div key={index} className="flex items-center space-x-2">
@@ -215,6 +214,9 @@ const AddRuleForm = ({ onAdd, onCancel }: AddRuleFormProps) => {
                 </Button>
               </div>
             </div>
+            <p className="text-xs text-gray-500 mt-2">
+              For validation/condition rules, link to existing Documentation rules instead of adding documents here.
+            </p>
           </div>
         )}
 
