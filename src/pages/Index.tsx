@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shield, Settings, FileText, Brain, Zap, AlertTriangle, Smartphone, Lock, Copy } from "lucide-react";
+import { Shield, Settings, FileText, Brain, Zap, AlertTriangle, Smartphone, Lock, Copy, Code } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
@@ -180,6 +180,13 @@ const Index = () => {
                     </p>
                     <p>Role-based access controls ensure only authorized FEMA administrators can configure disaster parameters and modify system settings</p>
                   </div>
+                  <div>
+                    <p className="font-medium flex items-center">
+                      <Code className="h-4 w-4 mr-2" />
+                      Rego Policy Engine
+                    </p>
+                    <p>Uses Open Policy Agent's Rego domain-specific language, a mature framework originally developed by Styra in 2016 and now part of the Cloud Native Computing Foundation (CNCF). Rego provides a declarative approach to policy authoring with proven scalability across cloud-native ecosystems.</p>
+                  </div>
                 </div>
               </div>
               <div>
@@ -194,6 +201,13 @@ const Index = () => {
                   <div>
                     <p className="font-medium">Deterministic Processing</p>
                     <p>All eligibility determinations made by rules engine with mandatory human review - AI assists but never makes final decisions</p>
+                  </div>
+                  <div>
+                    <p className="font-medium flex items-center">
+                      <Shield className="h-4 w-4 mr-2" />
+                      Battle-Tested Rules Framework
+                    </p>
+                    <p>Leverages Open Policy Agent's proven track record in enterprise environments including Google, Netflix, and major government agencies. The declarative nature of Rego eliminates common programming errors while providing clear audit trails for compliance and legal review.</p>
                   </div>
                 </div>
               </div>
