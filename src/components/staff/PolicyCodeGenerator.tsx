@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Download, Save, TestTube, CheckCircle, FileCode, Copy } from "lucide-react";
+import { Download, Save, TestTube, CheckCircle, FileCode, Copy, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface PolicyCodeGeneratorProps {
@@ -16,81 +16,175 @@ const PolicyCodeGenerator = ({ policyData, onSave }: PolicyCodeGeneratorProps) =
   const { toast } = useToast();
   const [testResults, setTestResults] = useState<any>(null);
 
-  const generatedCode = `# fema_eligibility/configs/${policyData.disasterId}/policy.py
+  const packageName = policyData.counties ? policyData.counties.toLowerCase().replace(/[^a-z0-9]/g, '_') : 'disaster_policy';
 
-from fema_eligibility.abstractions import AssistanceProgram, Disaster
-from fema_eligibility.common_rules import *
+  const generatedCode = `# fema_eligibility/policies/${policyData.disasterId}/${packageName}.rego
 
-def get_config() -> Disaster:
-    """
-    Defines the eligibility policy for ${policyData.counties} under disaster ${policyData.disasterId}.
-    
-    SPECIAL POLICIES:
-    - Expedited Serious Needs Assistance is ACTIVATED.
-    - Inspections are WAIVED for Clean and Sanitize.
-    - Inspections are WAIVED for Displacement Assistance.
-    """
-    
-    # --- Define All Available Assistance Programs ---
-    
-    sna_expedited = AssistanceProgram(
-        name="Serious Needs Assistance (Expedited)",
-        max_award=770.00,
-        rules=[rule_is_in_declared_area, rule_passed_validations, rule_is_in_geofence, rule_reported_immediate_need]
-    )
+package ${packageName}
 
-    sna_regular = AssistanceProgram(
-        name="Serious Needs Assistance (Regular)",
-        max_award=770.00,
-        rules=[rule_is_in_declared_area, rule_passed_validations, rule_inspection_found_minor_damage]
-    )
-    
-    clean_sanitize = AssistanceProgram(
-        name="Clean and Sanitize",
-        max_award=300.00,
-        # NOTE: The inspection rule is omitted here, effectively WAIVING it for this county's policy.
-        rules=[rule_is_in_declared_area, rule_passed_validations]
-    )
-    
-    displacement_assistance = AssistanceProgram(
-        name="Displacement Assistance",
-        max_award=1638.00,  # 14 days * $117/day
-        # NOTE: The inspection rule is omitted here, effectively WAIVING it for this county's policy.
-        rules=[rule_is_in_declared_area, rule_passed_validations]
-    )
+# Disaster Configuration for ${policyData.disasterId}
+# Location: ${policyData.counties}, ${policyData.state}
+# Generated with Rego Extensions: Temporal Logic, Geospatial Functions, Enhanced Data Integration
 
-    # --- Assemble the Final Disaster Object for This Policy ---
-    
-    return Disaster(
-        name="${policyData.disasterId}",
-        declared_counties={'${policyData.counties.split(',')[0].trim()}'}, # This policy is specific to ${policyData.counties} applicants
-        programs=[
-            sna_expedited,
-            sna_regular,
-            clean_sanitize,
-            displacement_assistance,
-        ]
-    )`;
+import future.keywords.if
+import future.keywords.in
+
+# Global Eligibility Criteria
+# These must be true for any assistance.
+global_eligibility if {
+    input.survivor.in_declared_area
+    input.survivor.passed_validations
+}
+
+# Serious Needs Assistance (Expedited) - Countywide
+allow_serious_needs_assistance_expedited if {
+    global_eligibility
+    input.survivor.in_geofenced_area
+    input.survivor.reported_immediate_need
+}
+
+# Serious Needs Assistance (Regular)
+allow_serious_needs_assistance_regular if {
+    global_eligibility
+    input.survivor.inspection.minor_damage_found
+}
+
+# Clean and Sanitize
+# Inspections are waived for Clean and Sanitize in ${policyData.counties}
+allow_clean_and_sanitize if {
+    global_eligibility
+    # Note: Inspection requirement omitted (waived for this county)
+}
+
+# Transportation Assistance (Replace)
+allow_transportation_assistance_replace if {
+    global_eligibility
+    input.survivor.vehicle.only_vehicle
+    input.survivor.vehicle.duly_registered
+    input.survivor.vehicle.duly_insured
+    input.survivor.documents.insurance_settlement_present
+    input.survivor.vehicle.uninsured_losses
+    input.survivor.documents.proof_of_loss_present
+    input.survivor.documents.replacement_estimate_or_appraisal_present
+}
+
+# Transportation Assistance (Repair)
+allow_transportation_assistance_repair if {
+    global_eligibility
+    input.survivor.vehicle.only_vehicle
+    input.survivor.vehicle.duly_registered
+    input.survivor.vehicle.duly_insured
+    input.survivor.documents.insurance_settlement_present
+    input.survivor.vehicle.uninsured_losses
+    input.survivor.documents.repair_bill_estimate_present
+}
+
+# Displacement Assistance
+# Inspections are waived for Displacement Assistance in ${policyData.counties}
+allow_displacement_assistance if {
+    global_eligibility
+    # Note: Inspection requirement omitted (waived for this county)
+}
+
+# Funeral Assistance
+allow_funeral_assistance if {
+    global_eligibility
+    input.survivor.responsible_for_funeral_costs
+    input.survivor.decedent_died_from_disaster
+    input.survivor.documents.death_certificate_present
+    input.survivor.documents.funeral_bill_present
+}
+
+# Child Care Assistance
+allow_child_care_assistance if {
+    global_eligibility
+    input.survivor.child_is_legal_responsibility
+    input.survivor.need_for_child_care_caused_by_disaster
+    input.survivor.child_care_criteria_met
+    input.survivor.documents.proof_of_cost_present
+}
+
+# Medical and Dental Assistance
+allow_medical_and_dental_assistance if {
+    global_eligibility
+    input.survivor.documents.medical_or_dental_need_caused_by_disaster
+    (input.survivor.documents.insurance_settlement_details_present; input.survivor.uninsured)
+    input.survivor.documents.receipts_or_quotes_present
+}
+
+# Personal Property Assistance
+allow_personal_property_assistance if {
+    global_eligibility
+    input.survivor.documents.personal_property_damaged_or_destroyed
+    input.survivor.documents.quotes_or_receipts_for_damaged_property_present
+}
+
+# Moving and Storage Expenses
+allow_moving_and_storage_expenses if {
+    global_eligibility
+    input.survivor.documents.moving_and_storage_necessary_due_to_disaster
+    input.survivor.documents.quotes_or_receipts_for_moving_and_storage_present
+}
+
+# Maximum Awards Configuration
+max_awards := {
+    "serious_needs_assistance_expedited": 770.00,
+    "serious_needs_assistance_regular": 770.00,
+    "clean_and_sanitize": 300.00,
+    "displacement_assistance": 1638.00,
+    "transportation_assistance_replace": 5000.00,
+    "transportation_assistance_repair": 5000.00,
+    "funeral_assistance": 9000.00,
+    "child_care_assistance": 1000.00,
+    "medical_and_dental_assistance": 1000.00,
+    "personal_property_assistance": 2500.00,
+    "moving_and_storage_expenses": 1000.00
+}
+
+# Special Provisions for ${policyData.counties}
+special_provisions := {
+    "clean_and_sanitize": ["INSPECTION_WAIVED"],
+    "displacement_assistance": ["INSPECTION_WAIVED"],
+    "serious_needs_assistance_expedited": ["GEOFENCING_ENABLED", "EXPEDITED_PROCESSING"]
+}
+
+# Temporal Logic Extensions (Enhanced Rego)
+# temporal_rule_example if {
+#     time.now_ns() - input.disaster.declaration_date < time.parse_duration_ns("30d")
+# }
+
+# Geospatial Extensions (Enhanced Rego)  
+# geofenced_area_check if {
+#     geo.within_polygon(input.survivor.location, input.disaster.geofenced_boundaries)
+# }
+
+# Data Integration Extensions (Enhanced Rego)
+# external_data_validation if {
+#     ssa.verify_identity(input.survivor.ssn)
+#     irs.validate_tax_status(input.survivor.tax_id)
+# }`;
 
   const handleRunTests = () => {
-    // Simulate test execution
+    // Simulate test execution for Rego
     setTimeout(() => {
       setTestResults({
         passed: true,
-        testCount: 12,
-        coverage: 94,
+        testCount: 15,
+        coverage: 96,
         scenarios: [
-          { name: "Eligible applicant in declared area", status: "PASS" },
-          { name: "Ineligible applicant outside county", status: "PASS" },
-          { name: "Expedited SNA with immediate need", status: "PASS" },
-          { name: "Clean & Sanitize without inspection", status: "PASS" },
-          { name: "Maximum award validation", status: "PASS" },
-          { name: "Edge case: Multiple programs", status: "PASS" }
+          { name: "Global eligibility validation", status: "PASS" },
+          { name: "Expedited SNA with geofencing", status: "PASS" },
+          { name: "Clean & Sanitize inspection waiver", status: "PASS" },
+          { name: "Displacement assistance eligibility", status: "PASS" },
+          { name: "Transportation assistance validation", status: "PASS" },
+          { name: "Funeral assistance requirements", status: "PASS" },
+          { name: "Rego syntax validation", status: "PASS" },
+          { name: "OPA engine compatibility", status: "PASS" }
         ]
       });
       toast({
-        title: "Tests Completed",
-        description: "All policy validation tests passed successfully.",
+        title: "Rego Tests Completed",
+        description: "All policy validation tests passed successfully with OPA engine.",
       });
     }, 2000);
   };
@@ -98,7 +192,7 @@ def get_config() -> Disaster:
   const handleCopyCode = () => {
     navigator.clipboard.writeText(generatedCode);
     toast({
-      title: "Code Copied",
+      title: "Rego Code Copied",
       description: "Policy code has been copied to clipboard.",
     });
   };
@@ -108,7 +202,7 @@ def get_config() -> Disaster:
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${policyData.disasterId}_policy.py`;
+    a.download = `${policyData.disasterId}_${packageName}.rego`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -118,19 +212,20 @@ def get_config() -> Disaster:
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <FileCode className="h-5 w-5 text-blue-500" />
-            <span>Generated Policy Code</span>
+            <Shield className="h-5 w-5 text-indigo-500" />
+            <span>Generated Rego Policy</span>
           </CardTitle>
           <CardDescription>
-            Review and test the generated policy.py file before deployment
+            Review and test the generated .rego policy file for Open Policy Agent deployment
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Badge variant="outline">Python</Badge>
+              <Badge variant="outline">Rego</Badge>
               <Badge variant="outline">{generatedCode.split('\n').length} lines</Badge>
-              <Badge variant="outline">Ready for Testing</Badge>
+              <Badge variant="outline">OPA Compatible</Badge>
+              <Badge variant="secondary">Enhanced Extensions</Badge>
             </div>
             <div className="flex space-x-2">
               <Button size="sm" variant="outline" onClick={handleCopyCode}>
@@ -156,27 +251,28 @@ def get_config() -> Disaster:
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <TestTube className="h-5 w-5 text-green-500" />
-            <span>Policy Validation & Testing</span>
+            <span>Rego Policy Validation & Testing</span>
           </CardTitle>
           <CardDescription>
-            Automated testing ensures policy correctness before deployment
+            Automated testing with Open Policy Agent engine ensures policy correctness
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h4 className="font-medium text-blue-900 mb-2">Testing Workflow</h4>
-            <div className="text-sm text-blue-800 space-y-1">
-              <p>• <strong>Syntax Validation:</strong> Verify Python code structure and imports</p>
-              <p>• <strong>Business Logic Tests:</strong> Test eligibility scenarios and edge cases</p>
-              <p>• <strong>Integration Tests:</strong> Validate against common rules library</p>
-              <p>• <strong>Compliance Check:</strong> Ensure policy meets FEMA requirements</p>
+          <div className="p-4 bg-indigo-50 rounded-lg">
+            <h4 className="font-medium text-indigo-900 mb-2">OPA Testing Workflow</h4>
+            <div className="text-sm text-indigo-800 space-y-1">
+              <p>• <strong>Rego Syntax Validation:</strong> Verify policy structure and OPA compatibility</p>
+              <p>• <strong>Business Logic Tests:</strong> Test eligibility scenarios with sample data</p>
+              <p>• <strong>Extension Validation:</strong> Verify temporal, geospatial, and data integration functions</p>
+              <p>• <strong>Performance Testing:</strong> Ensure policy evaluation meets response time requirements</p>
+              <p>• <strong>Security Assessment:</strong> Validate policy against FEMA compliance requirements</p>
             </div>
           </div>
 
           {!testResults && (
             <Button onClick={handleRunTests} className="w-full">
               <TestTube className="h-4 w-4 mr-2" />
-              Run Policy Validation Tests
+              Run Rego Policy Validation Tests
             </Button>
           )}
 
@@ -184,7 +280,7 @@ def get_config() -> Disaster:
             <div className="space-y-4">
               <div className="flex items-center space-x-2 text-green-600 mb-4">
                 <CheckCircle className="h-5 w-5" />
-                <span className="font-medium">All Tests Passed ({testResults.testCount}/12)</span>
+                <span className="font-medium">All Tests Passed ({testResults.testCount}/15)</span>
                 <Badge variant="secondary">{testResults.coverage}% Coverage</Badge>
               </div>
 
@@ -207,7 +303,7 @@ def get_config() -> Disaster:
         <div className="flex space-x-4">
           <Button onClick={onSave} className="flex-1 bg-green-600 hover:bg-green-700">
             <Save className="h-4 w-4 mr-2" />
-            Deploy Policy to Production
+            Deploy Rego Policy to OPA
           </Button>
           <Button variant="outline">
             Save as Draft

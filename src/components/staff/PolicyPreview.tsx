@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle, AlertTriangle, Code, DollarSign, FileText } from "lucide-react";
+import { CheckCircle, AlertTriangle, Code, DollarSign, FileText, Shield } from "lucide-react";
 
 interface PolicyPreviewProps {
   structuredPolicy: any;
@@ -20,55 +20,38 @@ const PolicyPreview = ({ structuredPolicy, onGenerateCode }: PolicyPreviewProps)
   }
 
   const handleGenerateCode = () => {
-    // Simulate code generation
-    const generatedCode = `# fema_eligibility/configs/DR-4701-NY-Broome/policy.py
+    // Generate Rego policy code
+    const regoCode = `package ${structuredPolicy.packageName}
 
-from fema_eligibility.abstractions import AssistanceProgram, Disaster
-from fema_eligibility.common_rules import *
+# Global Eligibility Criteria
+# These must be true for any assistance.
+global_eligibility {
+    ${structuredPolicy.globalEligibility.join('\n    ')}
+}
 
-def get_config() -> Disaster:
-    """
-    Defines the eligibility policy for Broome County under disaster DR-4701-NY.
-    
-    SPECIAL POLICIES:
-    - Expedited Serious Needs Assistance is ACTIVATED.
-    - Inspections are WAIVED for Clean and Sanitize.
-    - Inspections are WAIVED for Displacement Assistance.
-    """
-    
-    # --- Define All Available Assistance Programs ---
-    
-    sna_expedited = AssistanceProgram(
-        name="Serious Needs Assistance (Expedited)",
-        max_award=770.00,
-        rules=[rule_is_in_declared_area, rule_passed_validations, rule_is_in_geofence, rule_reported_immediate_need]
-    )
+${structuredPolicy.programs.map((program: any) => `
+# ${program.description}
+${program.regoRule} {
+    ${program.conditions.join('\n    ')}
+}`).join('\n')}
 
-    sna_regular = AssistanceProgram(
-        name="Serious Needs Assistance (Regular)",
-        max_award=770.00,
-        rules=[rule_is_in_declared_area, rule_passed_validations, rule_inspection_found_minor_damage]
-    )
-    
-    clean_sanitize = AssistanceProgram(
-        name="Clean and Sanitize",
-        max_award=300.00,
-        rules=[rule_is_in_declared_area, rule_passed_validations]
-    )
-    
-    displacement_assistance = AssistanceProgram(
-        name="Displacement Assistance",
-        max_award=1638.00,  # 14 days * $117/day
-        rules=[rule_is_in_declared_area, rule_passed_validations]
-    )
+# Maximum Awards Configuration
+max_awards := {
+    ${structuredPolicy.programs.map((program: any) => 
+        `"${program.regoRule}": ${program.maxAward}`
+    ).join(',\n    ')}
+}
 
-    return Disaster(
-        name="DR-4701-NY-Broome",
-        declared_counties={'Broome'},
-        programs=[sna_expedited, sna_regular, clean_sanitize, displacement_assistance]
-    )`;
+# Special Provisions
+special_provisions := {
+    ${structuredPolicy.programs
+        .filter((program: any) => program.specialProvisions)
+        .map((program: any) => 
+            `"${program.regoRule}": [${program.specialProvisions.map((p: string) => `"${p}"`).join(', ')}]`
+        ).join(',\n    ')}
+}`;
 
-    onGenerateCode(generatedCode);
+    onGenerateCode(regoCode);
   };
 
   return (
@@ -76,45 +59,74 @@ def get_config() -> Disaster:
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <FileText className="h-5 w-5 text-green-500" />
-            <span>Structured Policy Preview</span>
+            <Shield className="h-5 w-5 text-indigo-500" />
+            <span>Rego Policy Preview</span>
           </CardTitle>
           <CardDescription>
-            Review the AI-generated policy structure before generating executable code
+            Review the generated Rego policy structure before generating executable code
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {/* Special Policies Section */}
-            {structuredPolicy.specialPolicies && (
+            {/* Package Information */}
+            <div className="p-4 bg-indigo-50 rounded-lg">
+              <h3 className="font-semibold mb-2 flex items-center space-x-2">
+                <FileText className="h-4 w-4 text-indigo-600" />
+                <span>Policy Package</span>
+              </h3>
+              <div className="text-sm space-y-1">
+                <p><strong>Package Name:</strong> <code className="bg-white px-2 py-1 rounded">{structuredPolicy.packageName}</code></p>
+                <p><strong>Global Eligibility Rules:</strong> {structuredPolicy.globalEligibility.length} conditions</p>
+                <p><strong>Program Rules:</strong> {structuredPolicy.programs.length} assistance programs</p>
+              </div>
+            </div>
+
+            {/* Rego Extensions */}
+            {structuredPolicy.regoExtensions && (
               <div>
                 <h3 className="font-semibold mb-3 flex items-center space-x-2">
                   <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  <span>Special Policy Provisions</span>
+                  <span>Enhanced Rego Extensions</span>
                 </h3>
-                <div className="space-y-2">
-                  {structuredPolicy.specialPolicies.map((policy: string, index: number) => (
-                    <div key={index} className="flex items-center space-x-2 p-2 bg-amber-50 rounded">
-                      <CheckCircle className="h-4 w-4 text-amber-600" />
-                      <span className="text-sm">{policy}</span>
+                <div className="grid gap-3">
+                  {Object.entries(structuredPolicy.regoExtensions).map(([key, description]) => (
+                    <div key={key} className="flex items-start space-x-2 p-2 bg-amber-50 rounded">
+                      <CheckCircle className="h-4 w-4 text-amber-600 mt-0.5" />
+                      <div>
+                        <span className="text-sm font-medium capitalize">{key}:</span>
+                        <span className="text-sm ml-1">{description as string}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
+            {/* Global Eligibility */}
+            <div>
+              <h3 className="font-semibold mb-3">Global Eligibility Conditions</h3>
+              <div className="space-y-2">
+                {structuredPolicy.globalEligibility.map((condition: string, index: number) => (
+                  <div key={index} className="p-2 border rounded bg-gray-50">
+                    <code className="text-sm text-blue-600">{condition}</code>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Programs Table */}
             <div>
               <h3 className="font-semibold mb-3 flex items-center space-x-2">
                 <DollarSign className="h-4 w-4 text-green-500" />
-                <span>Assistance Programs</span>
+                <span>Assistance Programs & Rules</span>
               </h3>
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Program Name</TableHead>
+                    <TableHead>Rego Rule</TableHead>
                     <TableHead>Max Award</TableHead>
-                    <TableHead>Rules Required</TableHead>
+                    <TableHead>Conditions</TableHead>
                     <TableHead>Special Provisions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -122,12 +134,15 @@ def get_config() -> Disaster:
                   {structuredPolicy.programs.map((program: any, index: number) => (
                     <TableRow key={index}>
                       <TableCell className="font-medium">{program.name}</TableCell>
+                      <TableCell>
+                        <code className="text-xs bg-blue-100 px-2 py-1 rounded">{program.regoRule}</code>
+                      </TableCell>
                       <TableCell>${program.maxAward.toLocaleString()}</TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          {program.rules.map((rule: string, ruleIndex: number) => (
-                            <Badge key={ruleIndex} variant="outline" className="text-xs">
-                              {rule.replace('rule_', '').replace(/_/g, ' ')}
+                          {program.conditions.map((condition: string, condIndex: number) => (
+                            <Badge key={condIndex} variant="outline" className="text-xs block w-fit">
+                              {condition}
                             </Badge>
                           ))}
                         </div>
@@ -144,19 +159,6 @@ def get_config() -> Disaster:
                 </TableBody>
               </Table>
             </div>
-
-            {/* Rule Mapping */}
-            <div>
-              <h3 className="font-semibold mb-3">Rule Library Mapping</h3>
-              <div className="grid gap-2">
-                {Object.entries(structuredPolicy.ruleMapping).map(([rule, description]) => (
-                  <div key={rule} className="p-3 border rounded-lg">
-                    <div className="font-mono text-sm text-blue-600">{rule}</div>
-                    <div className="text-sm text-gray-600">{description as string}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>
@@ -164,7 +166,7 @@ def get_config() -> Disaster:
       <div className="flex space-x-4">
         <Button onClick={handleGenerateCode} className="flex-1">
           <Code className="h-4 w-4 mr-2" />
-          Generate Policy.py Code
+          Generate Rego Policy Code
         </Button>
         <Button variant="outline">
           Request Modifications
