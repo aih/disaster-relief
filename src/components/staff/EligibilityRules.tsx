@@ -187,9 +187,8 @@ const EligibilityRules = () => {
           </Button>
         </div>
         <AddRuleForm 
-          onSubmit={addRule}
+          onAdd={addRule}
           onCancel={() => setShowAddForm(false)}
-          existingRules={rules}
         />
       </div>
     );
@@ -266,8 +265,10 @@ const EligibilityRules = () => {
 
           {showFilters && (
             <RuleFilters
-              activeFilters={activeFilters}
-              onFiltersChange={setActiveFilters}
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              filterType={activeFilters.ruleType}
+              onFilterChange={(type: string) => setActiveFilters(prev => ({ ...prev, ruleType: type as any }))}
             />
           )}
         </CardContent>
