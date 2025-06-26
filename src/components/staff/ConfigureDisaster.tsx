@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -364,7 +365,7 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                         <div className="flex justify-between items-start">
                           <div className="flex-1 grid md:grid-cols-2 gap-4">
                             <div>
-                              <Label htmlFor={`law-title-${law.id}`}>Law Title</Label>
+                              <Label htmlFor={`law-title-${law.id}`}>Title</Label>
                               <Input
                                 id={`law-title-${law.id}`}
                                 placeholder="e.g., Stafford Act"
@@ -373,7 +374,7 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                               />
                             </div>
                             <div>
-                              <Label htmlFor={`law-reference-${law.id}`}>Legal Reference</Label>
+                              <Label htmlFor={`law-reference-${law.id}`}>Reference</Label>
                               <Input
                                 id={`law-reference-${law.id}`}
                                 placeholder="e.g., 42 U.S.C. § 5121"

@@ -35,14 +35,10 @@ const PolicyInputForm = ({ policyData, onUpdate, onNext }: PolicyInputFormProps)
         onUpdate={handleMetadataUpdate}
       />
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="md:col-span-1">
-          <GoverningItemsManager 
-            items={policyData.governingItems}
-            onItemsChange={handleGoverningItemsChange}
-          />
-        </div>
-      </div>
+      <GoverningItemsManager 
+        items={policyData.governingItems}
+        onItemsChange={handleGoverningItemsChange}
+      />
 
       <div>
         <Label htmlFor="policy-text">Policy Document (Plain Text)</Label>
