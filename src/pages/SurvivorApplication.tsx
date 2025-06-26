@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-import { Users, FileText, AlertCircle, CheckCircle, Phone, Mail, Upload, X } from "lucide-react";
+import { Users, FileText, AlertCircle, CheckCircle, Phone, Mail, Upload, X, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,7 +19,10 @@ const SurvivorApplication = () => {
     insurance: [],
     id: [],
     receipts: [],
-    damage: []
+    damage: [],
+    vehicle: [],
+    funeral: [],
+    death: []
   });
   const [formData, setFormData] = useState({
     firstName: "",
@@ -31,14 +33,27 @@ const SurvivorApplication = () => {
     city: "",
     state: "",
     zipCode: "",
+    county: "",
     disaster: "",
     assistanceType: [],
     damageDescription: "",
     hasInsurance: "",
-    previousFEMAAssistance: false
+    previousFEMAAssistance: false,
+    immediateNeed: false,
+    vehicleInfo: {
+      isOnlyVehicle: false,
+      isRegistered: false,
+      isInsured: false,
+      needsRepair: false,
+      needsReplacement: false
+    },
+    funeralInfo: {
+      isResponsible: false,
+      deathCausedByDisaster: false
+    }
   });
 
-  const totalSteps = 5; // Updated to include document upload step
+  const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
 
   const handleFileUpload = (category: string, files: FileList | null) => {
@@ -73,7 +88,7 @@ const SurvivorApplication = () => {
   const handleSubmit = () => {
     toast({
       title: "Application Submitted Successfully",
-      description: "Your disaster assistance application has been received. Reference ID: DA-2024-001234",
+      description: "Your disaster assistance application has been received. Reference ID: DR-4701-001234",
     });
     navigate('/application-status');
   };
@@ -144,7 +159,7 @@ const SurvivorApplication = () => {
               />
             </div>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-4 gap-4">
               <div>
                 <Label htmlFor="city">City *</Label>
                 <Input 
@@ -161,10 +176,18 @@ const SurvivorApplication = () => {
                     <SelectValue placeholder="Select state" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="FL">Florida</SelectItem>
-                    <SelectItem value="TX">Texas</SelectItem>
-                    <SelectItem value="CA">California</SelectItem>
-                    <SelectItem value="LA">Louisiana</SelectItem>
+                    <SelectItem value="NY">New York</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="county">County *</Label>
+                <Select onValueChange={(value) => setFormData({...formData, county: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select county" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Broome">Broome County</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -197,9 +220,7 @@ const SurvivorApplication = () => {
                   <SelectValue placeholder="Select the disaster" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="DR-4729">DR-4729 - Hurricane Helena (Florida)</SelectItem>
-                  <SelectItem value="DR-4730">DR-4730 - Wildfire Complex (California)</SelectItem>
-                  <SelectItem value="DR-4728">DR-4728 - Severe Storms (Texas)</SelectItem>
+                  <SelectItem value="DR-4701-NY">DR-4701-NY - Broome County Disaster</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -208,32 +229,88 @@ const SurvivorApplication = () => {
               <Label>What type of assistance do you need? (Select all that apply) *</Label>
               <div className="space-y-3 mt-2">
                 {[
-                  { id: "housing", label: "Housing Assistance (Temporary lodging, home repairs)" },
-                  { id: "other", label: "Other Needs Assistance (Personal property, transportation)" },
-                  { id: "sba", label: "Small Business Administration (SBA) Loan Referral" },
-                  { id: "hazard", label: "Hazard Mitigation Assistance" }
+                  { 
+                    id: "sna-expedited", 
+                    label: "Serious Needs Assistance (Expedited)", 
+                    description: "Up to $770 - For immediate basic needs",
+                    special: true
+                  },
+                  { 
+                    id: "sna-regular", 
+                    label: "Serious Needs Assistance (Regular)", 
+                    description: "Up to $770 - Requires inspection for minor damage"
+                  },
+                  { 
+                    id: "clean-sanitize", 
+                    label: "Clean and Sanitize", 
+                    description: "Up to $300 - No inspection required",
+                    special: true
+                  },
+                  { 
+                    id: "transport-repair", 
+                    label: "Transportation Assistance (Repair)", 
+                    description: "Up to $5,000 - Vehicle repair assistance"
+                  },
+                  { 
+                    id: "transport-replace", 
+                    label: "Transportation Assistance (Replace)", 
+                    description: "Up to $15,000 - Vehicle replacement assistance"
+                  },
+                  { 
+                    id: "funeral", 
+                    label: "Funeral Assistance", 
+                    description: "Up to $7,000 - For disaster-related deaths"
+                  },
+                  { 
+                    id: "displacement", 
+                    label: "Displacement Assistance", 
+                    description: "Up to $1,638 - Temporary lodging (14 days) - No inspection required",
+                    special: true
+                  }
                 ].map((option) => (
-                  <div key={option.id} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={option.id}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setFormData({
-                            ...formData, 
-                            assistanceType: [...formData.assistanceType, option.id]
-                          });
-                        } else {
-                          setFormData({
-                            ...formData,
-                            assistanceType: formData.assistanceType.filter(type => type !== option.id)
-                          });
-                        }
-                      }}
-                    />
-                    <Label htmlFor={option.id} className="font-normal">{option.label}</Label>
+                  <div key={option.id} className="border rounded-lg p-3">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox 
+                        id={option.id}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setFormData({
+                              ...formData, 
+                              assistanceType: [...formData.assistanceType, option.id]
+                            });
+                          } else {
+                            setFormData({
+                              ...formData,
+                              assistanceType: formData.assistanceType.filter(type => type !== option.id)
+                            });
+                          }
+                        }}
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <Label htmlFor={option.id} className="font-medium">{option.label}</Label>
+                          {option.special && <Star className="h-4 w-4 text-yellow-500" />}
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">{option.description}</p>
+                        {option.special && (
+                          <p className="text-xs text-green-600 mt-1 font-medium">✓ Special policy active for Broome County</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="immediateNeed"
+                checked={formData.immediateNeed}
+                onCheckedChange={(checked) => setFormData({...formData, immediateNeed: checked as boolean})}
+              />
+              <Label htmlFor="immediateNeed" className="font-normal">
+                I have immediate needs (qualifies for expedited assistance)
+              </Label>
             </div>
 
             <div>
@@ -246,9 +323,6 @@ const SurvivorApplication = () => {
                 rows={4}
                 required
               />
-              <p className="text-sm text-gray-500 mt-1">
-                Include information about structural damage, personal property loss, and any immediate needs.
-              </p>
             </div>
           </div>
         );
@@ -257,8 +331,8 @@ const SurvivorApplication = () => {
         return (
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Insurance & Previous Assistance</h2>
-              <p className="text-gray-600">Help us understand your insurance coverage and previous FEMA assistance.</p>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">Additional Information</h2>
+              <p className="text-gray-600">Please provide additional details based on your assistance needs.</p>
             </div>
 
             <div>
@@ -276,20 +350,76 @@ const SurvivorApplication = () => {
               </Select>
             </div>
 
-            {formData.hasInsurance && formData.hasInsurance.startsWith('yes') && (
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <div className="flex items-start space-x-3">
-                  <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-blue-800">Important Insurance Information</h4>
-                    <p className="text-blue-700 text-sm mt-1">
-                      FEMA assistance may be reduced by the amount of insurance you receive. 
-                      You will need to provide documentation of your insurance settlement or denial.
-                    </p>
+            {formData.assistanceType.includes('transport-repair') || formData.assistanceType.includes('transport-replace') ? (
+              <div className="bg-blue-50 p-4 rounded-lg space-y-4">
+                <h3 className="font-semibold text-blue-800">Vehicle Information</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="isOnlyVehicle"
+                      checked={formData.vehicleInfo.isOnlyVehicle}
+                      onCheckedChange={(checked) => setFormData({
+                        ...formData, 
+                        vehicleInfo: {...formData.vehicleInfo, isOnlyVehicle: checked as boolean}
+                      })}
+                    />
+                    <Label htmlFor="isOnlyVehicle" className="font-normal">This is my only vehicle</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="isRegistered"
+                      checked={formData.vehicleInfo.isRegistered}
+                      onCheckedChange={(checked) => setFormData({
+                        ...formData, 
+                        vehicleInfo: {...formData.vehicleInfo, isRegistered: checked as boolean}
+                      })}
+                    />
+                    <Label htmlFor="isRegistered" className="font-normal">Vehicle is registered in my name</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="isInsured"
+                      checked={formData.vehicleInfo.isInsured}
+                      onCheckedChange={(checked) => setFormData({
+                        ...formData, 
+                        vehicleInfo: {...formData.vehicleInfo, isInsured: checked as boolean}
+                      })}
+                    />
+                    <Label htmlFor="isInsured" className="font-normal">Vehicle is insured</Label>
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
+
+            {formData.assistanceType.includes('funeral') ? (
+              <div className="bg-orange-50 p-4 rounded-lg space-y-4">
+                <h3 className="font-semibold text-orange-800">Funeral Assistance Information</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="isResponsible"
+                      checked={formData.funeralInfo.isResponsible}
+                      onCheckedChange={(checked) => setFormData({
+                        ...formData, 
+                        funeralInfo: {...formData.funeralInfo, isResponsible: checked as boolean}
+                      })}
+                    />
+                    <Label htmlFor="isResponsible" className="font-normal">I am responsible for funeral expenses</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="deathCausedByDisaster"
+                      checked={formData.funeralInfo.deathCausedByDisaster}
+                      onCheckedChange={(checked) => setFormData({
+                        ...formData, 
+                        funeralInfo: {...formData.funeralInfo, deathCausedByDisaster: checked as boolean}
+                      })}
+                    />
+                    <Label htmlFor="deathCausedByDisaster" className="font-normal">Death was caused by the disaster</Label>
+                  </div>
+                </div>
+              </div>
+            ) : null}
 
             <div className="flex items-center space-x-2">
               <Checkbox 
@@ -301,21 +431,6 @@ const SurvivorApplication = () => {
                 I have received FEMA assistance for this disaster before
               </Label>
             </div>
-
-            {formData.previousFEMAAssistance && (
-              <div className="bg-orange-50 p-4 rounded-lg">
-                <div className="flex items-start space-x-3">
-                  <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-orange-800">Previous Assistance Notice</h4>
-                    <p className="text-orange-700 text-sm mt-1">
-                      We will review your previous assistance and may need additional documentation 
-                      to process your current application.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         );
 
@@ -324,15 +439,45 @@ const SurvivorApplication = () => {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Document Upload</h2>
-              <p className="text-gray-600">Upload supporting documents to help process your application faster.</p>
+              <p className="text-gray-600">Upload supporting documents based on your assistance needs.</p>
             </div>
 
             <div className="space-y-6">
+              {/* Required Documents */}
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-800 mb-3">Required Documents</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="id-upload">Identity Verification (Driver's License, Passport, State ID) *</Label>
+                    <Input
+                      id="id-upload"
+                      type="file"
+                      multiple
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={(e) => handleFileUpload('id', e.target.files)}
+                      className="cursor-pointer mt-2"
+                    />
+                    {uploadedFiles.id.length > 0 && (
+                      <div className="space-y-2 mt-2">
+                        {uploadedFiles.id.map((file, index) => (
+                          <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                            <span className="text-sm text-gray-600">{file.name}</span>
+                            <Button size="sm" variant="ghost" onClick={() => removeFile('id', index)}>
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Insurance Documentation */}
               <div className="border rounded-lg p-4">
                 <h3 className="font-semibold text-gray-800 mb-3">Insurance Documentation</h3>
                 <div className="space-y-3">
-                  <Label htmlFor="insurance-upload">Insurance policy, claim forms, or denial letters</Label>
+                  <Label htmlFor="insurance-upload">Insurance policy, claim forms, settlement information, or denial letters</Label>
                   <Input
                     id="insurance-upload"
                     type="file"
@@ -346,11 +491,7 @@ const SurvivorApplication = () => {
                       {uploadedFiles.insurance.map((file, index) => (
                         <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
                           <span className="text-sm text-gray-600">{file.name}</span>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => removeFile('insurance', index)}
-                          >
+                          <Button size="sm" variant="ghost" onClick={() => removeFile('insurance', index)}>
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
@@ -360,113 +501,109 @@ const SurvivorApplication = () => {
                 </div>
               </div>
 
-              {/* ID Verification */}
-              <div className="border rounded-lg p-4">
-                <h3 className="font-semibold text-gray-800 mb-3">ID Verification</h3>
-                <div className="space-y-3">
-                  <Label htmlFor="id-upload">Driver's license, passport, or state-issued ID</Label>
-                  <Input
-                    id="id-upload"
-                    type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => handleFileUpload('id', e.target.files)}
-                    className="cursor-pointer"
-                  />
-                  {uploadedFiles.id.length > 0 && (
-                    <div className="space-y-2">
-                      {uploadedFiles.id.map((file, index) => (
-                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                          <span className="text-sm text-gray-600">{file.name}</span>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => removeFile('id', index)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+              {/* Vehicle Documentation - only show if transportation assistance selected */}
+              {(formData.assistanceType.includes('transport-repair') || formData.assistanceType.includes('transport-replace')) && (
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-800 mb-3">Vehicle Documentation</h3>
+                  <div className="space-y-3">
+                    <Label htmlFor="vehicle-upload">
+                      Vehicle registration, insurance, repair bills, or replacement proof
+                    </Label>
+                    <Input
+                      id="vehicle-upload"
+                      type="file"
+                      multiple
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                      onChange={(e) => handleFileUpload('vehicle', e.target.files)}
+                      className="cursor-pointer"
+                    />
+                    {uploadedFiles.vehicle.length > 0 && (
+                      <div className="space-y-2">
+                        {uploadedFiles.vehicle.map((file, index) => (
+                          <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                            <span className="text-sm text-gray-600">{file.name}</span>
+                            <Button size="sm" variant="ghost" onClick={() => removeFile('vehicle', index)}>
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Receipts and Expenses */}
-              <div className="border rounded-lg p-4">
-                <h3 className="font-semibold text-gray-800 mb-3">Receipts and Expenses</h3>
-                <div className="space-y-3">
-                  <Label htmlFor="receipts-upload">Temporary lodging, repairs, or other disaster-related expenses</Label>
-                  <Input
-                    id="receipts-upload"
-                    type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                    onChange={(e) => handleFileUpload('receipts', e.target.files)}
-                    className="cursor-pointer"
-                  />
-                  {uploadedFiles.receipts.length > 0 && (
-                    <div className="space-y-2">
-                      {uploadedFiles.receipts.map((file, index) => (
-                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                          <span className="text-sm text-gray-600">{file.name}</span>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => removeFile('receipts', index)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
+              {/* Funeral Documentation - only show if funeral assistance selected */}
+              {formData.assistanceType.includes('funeral') && (
+                <div className="border rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-800 mb-3">Funeral Documentation</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="death-upload">Death Certificate *</Label>
+                      <Input
+                        id="death-upload"
+                        type="file"
+                        multiple
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => handleFileUpload('death', e.target.files)}
+                        className="cursor-pointer mt-2"
+                      />
                     </div>
-                  )}
+                    <div>
+                      <Label htmlFor="funeral-upload">Funeral Bills and Documentation *</Label>
+                      <Input
+                        id="funeral-upload"
+                        type="file"
+                        multiple
+                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                        onChange={(e) => handleFileUpload('funeral', e.target.files)}
+                        className="cursor-pointer mt-2"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Damage Photos */}
+              {/* General Documents */}
               <div className="border rounded-lg p-4">
-                <h3 className="font-semibold text-gray-800 mb-3">Damage Photos</h3>
-                <div className="space-y-3">
-                  <Label htmlFor="damage-upload">Photos showing damage to your property</Label>
-                  <Input
-                    id="damage-upload"
-                    type="file"
-                    multiple
-                    accept=".jpg,.jpeg,.png"
-                    onChange={(e) => handleFileUpload('damage', e.target.files)}
-                    className="cursor-pointer"
-                  />
-                  {uploadedFiles.damage.length > 0 && (
-                    <div className="space-y-2">
-                      {uploadedFiles.damage.map((file, index) => (
-                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                          <span className="text-sm text-gray-600">{file.name}</span>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => removeFile('damage', index)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                <h3 className="font-semibold text-gray-800 mb-3">Additional Documentation</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="receipts-upload">Receipts and Disaster-Related Expenses</Label>
+                    <Input
+                      id="receipts-upload"
+                      type="file"
+                      multiple
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                      onChange={(e) => handleFileUpload('receipts', e.target.files)}
+                      className="cursor-pointer mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="damage-upload">Damage Photos</Label>
+                    <Input
+                      id="damage-upload"
+                      type="file"
+                      multiple
+                      accept=".jpg,.jpeg,.png"
+                      onChange={(e) => handleFileUpload('damage', e.target.files)}
+                      className="cursor-pointer mt-2"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="bg-green-50 p-4 rounded-lg">
               <div className="flex items-start space-x-3">
-                <Upload className="h-5 w-5 text-blue-600 mt-0.5" />
+                <Star className="h-5 w-5 text-green-600 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-blue-800">Document Upload Tips</h4>
-                  <ul className="text-blue-700 text-sm mt-1 space-y-1">
-                    <li>• Accepted formats: PDF, JPG, PNG, DOC, DOCX</li>
-                    <li>• Maximum file size: 10MB per file</li>
-                    <li>• You can upload documents now or mail them later</li>
-                    <li>• Clear photos and scanned documents process faster</li>
+                  <h4 className="font-semibold text-green-800">Broome County Special Policies</h4>
+                  <ul className="text-green-700 text-sm mt-1 space-y-1">
+                    <li>• Expedited Serious Needs Assistance available for immediate needs</li>
+                    <li>• Inspections waived for Clean and Sanitize assistance</li>
+                    <li>• Inspections waived for Displacement Assistance</li>
+                    <li>• Faster processing for qualifying applications</li>
                   </ul>
                 </div>
               </div>
@@ -487,14 +624,15 @@ const SurvivorApplication = () => {
                 <h3 className="font-semibold text-gray-800 mb-2">Personal Information</h3>
                 <p>{formData.firstName} {formData.lastName}</p>
                 <p>{formData.phone} {formData.email && `• ${formData.email}`}</p>
-                <p>{formData.address}, {formData.city}, {formData.state} {formData.zipCode}</p>
+                <p>{formData.address}, {formData.city}, {formData.county} County, {formData.state} {formData.zipCode}</p>
               </div>
 
               <div>
                 <h3 className="font-semibold text-gray-800 mb-2">Disaster & Assistance</h3>
                 <p>Disaster: {formData.disaster}</p>
-                <p>Assistance Type: {formData.assistanceType.join(', ')}</p>
+                <p>Assistance Programs: {formData.assistanceType.length} selected</p>
                 <p>Insurance: {formData.hasInsurance}</p>
+                {formData.immediateNeed && <p className="text-green-600 font-medium">✓ Immediate needs reported (expedited processing)</p>}
               </div>
             </div>
 
@@ -502,10 +640,11 @@ const SurvivorApplication = () => {
               <div className="flex items-start space-x-3">
                 <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-blue-800">Next Steps</h4>
+                  <h4 className="font-semibold text-blue-800">Next Steps for DR-4701-NY</h4>
                   <ul className="text-blue-700 text-sm mt-1 space-y-1">
-                    <li>• You will receive a confirmation email with your application reference number</li>
-                    <li>• FEMA will contact you within 10 days to schedule an inspection (if applicable)</li>
+                    <li>• You will receive a confirmation email with reference number DR-4701-XXXXXX</li>
+                    <li>• Expedited assistance may be processed within 24-48 hours if qualified</li>
+                    <li>• Some programs have waived inspection requirements for faster processing</li>
                     <li>• You can check your application status online or by calling 1-800-621-3362</li>
                     <li>• Continue to save receipts for disaster-related expenses</li>
                   </ul>
@@ -529,7 +668,7 @@ const SurvivorApplication = () => {
             <div className="flex items-center space-x-3">
               <Users className="h-6 w-6" />
               <div>
-                <h1 className="text-xl font-bold">Disaster Assistance Application</h1>
+                <h1 className="text-xl font-bold">DR-4701-NY Broome County Application</h1>
                 <p className="text-green-200 text-sm">Federal Emergency Management Agency</p>
               </div>
             </div>
