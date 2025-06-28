@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,10 +15,13 @@ interface ConfigureDisasterProps {
 
 interface AssistanceProgram {
   name: string;
+  programType: string;
   maxAward: number;
   isExpedited: boolean;
   inspectionWaived: boolean;
   rules: string[];
+  subjectToCap: string;
+  definition: string;
 }
 
 interface GoverningLaw {
@@ -46,12 +48,180 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
   const [assistancePrograms, setAssistancePrograms] = useState<AssistanceProgram[]>([
     {
       name: "Serious Needs Assistance (Regular)",
+      programType: "serious_needs_regular",
       maxAward: 770,
       isExpedited: false,
       inspectionWaived: false,
-      rules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_inspection_found_minor_damage"]
+      rules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_inspection_found_minor_damage"],
+      subjectToCap: "Yes (ONA)",
+      definition: "Funding to support the purchase of life-sustaining goods (e.g., medication, food, baby formula, diapers, etc.)"
     }
   ]);
+
+  const predefinedAssistanceTypes = {
+    serious_needs_regular: {
+      name: "Serious Needs Regular",
+      definition: "Funding to support the purchase of life-sustaining goods (e.g., medication, food, baby formula, diapers, etc.)",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_inspection_found_minor_damage"],
+      maxAward: 770,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    serious_needs_expedited: {
+      name: "Serious Needs Assistance Expedited",
+      definition: "Immediate funding to support the purchase of life-sustaining goods without inspection",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_is_in_geofence", "rule_reported_immediate_need"],
+      maxAward: 770,
+      isExpedited: true,
+      inspectionWaived: true
+    },
+    clean_and_sanitize: {
+      name: "Clean and Sanitize",
+      definition: "Immediate funding to support clean-up of damaged homes to prevent mold growth",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations"],
+      maxAward: 300,
+      isExpedited: false,
+      inspectionWaived: true
+    },
+    rental_assistance_initial: {
+      name: "Rental Assistance (Initial)",
+      definition: "Funding to support rental of a non-damaged property while developing permanent housing plan",
+      subjectToCap: "No",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_displacement_verified"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    rental_assistance_continuing: {
+      name: "Rental Assistance (Continuing)",
+      definition: "Continuing funding for rental assistance with income calculations required",
+      subjectToCap: "No",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_income_verified"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    lodging_expense_reimbursement: {
+      name: "Lodging Expense Reimbursement (LER)",  
+      definition: "Funding to reimburse survivor for temporary lodging in immediate aftermath",
+      subjectToCap: "No",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_has_lodging_receipts"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    home_repair_replacement: {
+      name: "Home Repair or Replacement",
+      definition: "Funding to repair or replace a damaged home subject to statutory cap",
+      subjectToCap: "Yes (HA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_inspection_found_minor_damage", "rule_has_insurance_settlement_info"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    transportation_repair: {
+      name: "Transportation Assistance Repair",
+      definition: "Funding to repair a damaged vehicle",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_passed_validations", "rule_is_only_vehicle", "rule_vehicle_registered_and_insured", "rule_has_insurance_settlement_info", "rule_has_repair_bill"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    transportation_replacement: {
+      name: "Transportation Assistance Replacement",
+      definition: "Funding to replace a destroyed vehicle",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_passed_validations", "rule_is_only_vehicle", "rule_vehicle_registered_and_insured", "rule_has_insurance_settlement_info", "rule_has_replacement_proof"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    funeral_assistance: {
+      name: "Funeral Assistance",
+      definition: "Funding to cover interment, reinterment, and/or cremation expenses",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_passed_validations", "rule_is_responsible_for_funeral", "rule_death_caused_by_disaster", "rule_has_death_certificate", "rule_has_funeral_bill"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    child_care_assistance: {
+      name: "Child Care Assistance",
+      definition: "Funding to cover disaster-caused childcare need",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_has_child_care_receipts"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    displacement_assistance: {
+      name: "Displacement Assistance",
+      definition: "Funding to reimburse survivor for temporary lodging (14 days prior to rental assistance)",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: true
+    },
+    medical_dental_assistance: {
+      name: "Medical and Dental Assistance",
+      definition: "Funding to reimburse survivor for disaster-caused medical/dental expenses",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_has_medical_receipts"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    personal_property_assistance: {
+      name: "Personal Property Assistance",
+      definition: "Funding to reimburse survivor for disaster-caused losses of specific items",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_inspection_found_minor_damage"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    moving_storage_expenses: {
+      name: "Moving and Storage Expenses",
+      definition: "Funding to reimburse survivor for moving/storing belongings from damaged structure",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_has_moving_receipts"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    miscellaneous_items: {
+      name: "Miscellaneous Items",
+      definition: "Reimbursement for certain items on disaster-by-disaster basis",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_has_receipts"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    generators: {
+      name: "Generators",
+      definition: "Reimbursement for purchase of temporary generators for disaster-impacted dwelling",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations", "rule_needs_medical_power"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    },
+    custom: {
+      name: "Custom Program",
+      definition: "Create a custom assistance program",
+      subjectToCap: "Yes (ONA)",
+      defaultRules: ["rule_is_in_declared_area", "rule_passed_validations"],
+      maxAward: 0,
+      isExpedited: false,
+      inspectionWaived: false
+    }
+  };
 
   const [specialProvisions, setSpecialProvisions] = useState({
     expeditedSNA: false,
@@ -192,10 +362,13 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
   const addProgram = () => {
     setAssistancePrograms([...assistancePrograms, {
       name: "",
+      programType: "",
       maxAward: 0,
       isExpedited: false,
       inspectionWaived: false,
-      rules: ["rule_is_in_declared_area", "rule_passed_validations"]
+      rules: ["rule_is_in_declared_area", "rule_passed_validations"],
+      subjectToCap: "Yes (ONA)",
+      definition: ""
     }]);
   };
 
@@ -207,6 +380,22 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
     const updated = [...assistancePrograms];
     updated[index] = { ...updated[index], [field]: value };
     setAssistancePrograms(updated);
+  };
+
+  const handleProgramTypeChange = (index: number, programType: string) => {
+    if (programType in predefinedAssistanceTypes) {
+      const preset = predefinedAssistanceTypes[programType as keyof typeof predefinedAssistanceTypes];
+      updateProgram(index, 'programType', programType);
+      updateProgram(index, 'name', preset.name);
+      updateProgram(index, 'definition', preset.definition);
+      updateProgram(index, 'subjectToCap', preset.subjectToCap);
+      updateProgram(index, 'rules', [...preset.defaultRules]);
+      updateProgram(index, 'maxAward', preset.maxAward);
+      updateProgram(index, 'isExpedited', preset.isExpedited);
+      updateProgram(index, 'inspectionWaived', preset.inspectionWaived);
+    } else {
+      updateProgram(index, 'programType', programType);
+    }
   };
 
   const addRuleToProgram = (programIndex: number, rule: string) => {
@@ -424,25 +613,99 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                 <Card key={index} className="border-l-4 border-l-blue-500">
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start">
-                      <div className="flex-1 grid md:grid-cols-2 gap-4">
+                      <div className="flex-1 space-y-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor={`program-type-${index}`}>Program Type</Label>
+                            <Select value={program.programType} onValueChange={(value) => handleProgramTypeChange(index, value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select program type or create custom" />
+                              </SelectTrigger>
+                              <SelectContent className="max-h-60 overflow-y-auto">
+                                <SelectItem value="serious_needs_regular">Serious Needs Regular</SelectItem>
+                                <SelectItem value="serious_needs_expedited">Serious Needs Expedited</SelectItem>
+                                <SelectItem value="clean_and_sanitize">Clean and Sanitize</SelectItem>
+                                <SelectItem value="rental_assistance_initial">Rental Assistance (Initial)</SelectItem>
+                                <SelectItem value="rental_assistance_continuing">Rental Assistance (Continuing)</SelectItem>
+                                <SelectItem value="lodging_expense_reimbursement">Lodging Expense Reimbursement</SelectItem>
+                                <SelectItem value="home_repair_replacement">Home Repair or Replacement</SelectItem>
+                                <SelectItem value="transportation_repair">Transportation Repair</SelectItem>
+                                <SelectItem value="transportation_replacement">Transportation Replacement</SelectItem>
+                                <SelectItem value="funeral_assistance">Funeral Assistance</SelectItem>
+                                <SelectItem value="child_care_assistance">Child Care Assistance</SelectItem>
+                                <SelectItem value="displacement_assistance">Displacement Assistance</SelectItem>
+                                <SelectItem value="medical_dental_assistance">Medical and Dental Assistance</SelectItem>
+                                <SelectItem value="personal_property_assistance">Personal Property Assistance</SelectItem>
+                                <SelectItem value="moving_storage_expenses">Moving and Storage Expenses</SelectItem>
+                                <SelectItem value="miscellaneous_items">Miscellaneous Items</SelectItem>
+                                <SelectItem value="generators">Generators</SelectItem>
+                                <SelectItem value="custom">Custom Program</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor={`max-award-${index}`}>Maximum Award ($)</Label>
+                            <Input
+                              id={`max-award-${index}`}
+                              type="number"
+                              placeholder="0.00"
+                              value={program.maxAward}
+                              onChange={(e) => updateProgram(index, 'maxAward', parseFloat(e.target.value) || 0)}
+                            />
+                          </div>
+                        </div>
+                        
                         <div>
                           <Label htmlFor={`program-name-${index}`}>Program Name</Label>
                           <Input
                             id={`program-name-${index}`}
-                            placeholder="e.g., Serious Needs Assistance"
+                            placeholder="Enter program name"
                             value={program.name}
                             onChange={(e) => updateProgram(index, 'name', e.target.value)}
                           />
                         </div>
-                        <div>
-                          <Label htmlFor={`max-award-${index}`}>Maximum Award ($)</Label>
-                          <Input
-                            id={`max-award-${index}`}
-                            type="number"
-                            placeholder="0.00"
-                            value={program.maxAward}
-                            onChange={(e) => updateProgram(index, 'maxAward', parseFloat(e.target.value) || 0)}
-                          />
+
+                        {program.definition && (
+                          <div>
+                            <Label htmlFor={`program-definition-${index}`}>Program Definition</Label>
+                            <Textarea
+                              id={`program-definition-${index}`}
+                              value={program.definition}
+                              onChange={(e) => updateProgram(index, 'definition', e.target.value)}
+                              rows={2}
+                              className="text-sm"
+                            />
+                          </div>
+                        )}
+
+                        <div className="grid md:grid-cols-3 gap-4">
+                          <div>
+                            <Label htmlFor={`subject-to-cap-${index}`}>Subject to Cap</Label>
+                            <Input
+                              id={`subject-to-cap-${index}`}
+                              value={program.subjectToCap}
+                              onChange={(e) => updateProgram(index, 'subjectToCap', e.target.value)}
+                              placeholder="Yes (ONA)"
+                            />
+                          </div>
+                          <div className="flex items-center space-x-4">
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                checked={program.isExpedited}
+                                onChange={(e) => updateProgram(index, 'isExpedited', e.target.checked)}
+                              />
+                              <span className="text-sm">Expedited</span>
+                            </label>
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                checked={program.inspectionWaived}
+                                onChange={(e) => updateProgram(index, 'inspectionWaived', e.target.checked)}
+                              />
+                              <span className="text-sm">Inspection Waived</span>
+                            </label>
+                          </div>
                         </div>
                       </div>
                       <Button
@@ -456,25 +719,6 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex space-x-4">
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={program.isExpedited}
-                          onChange={(e) => updateProgram(index, 'isExpedited', e.target.checked)}
-                        />
-                        <span className="text-sm">Expedited Processing</span>
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={program.inspectionWaived}
-                          onChange={(e) => updateProgram(index, 'inspectionWaived', e.target.checked)}
-                        />
-                        <span className="text-sm">Inspection Waived</span>
-                      </label>
-                    </div>
-
                     <Collapsible>
                       <CollapsibleTrigger className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800">
                         Eligibility Rules ({program.rules.length})
