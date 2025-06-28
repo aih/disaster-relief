@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Users, Shield, Settings, FileText, Database, Zap, CheckCircle, Clock, Globe } from "lucide-react";
+import { ArrowRight, Users, Shield, Settings, FileText, Database, Zap, CheckCircle, Clock, Globe, Cloud } from "lucide-react";
 
 const DocumentationTab = () => {
   return (
@@ -162,6 +162,19 @@ const DocumentationTab = () => {
                   </div>
                 </div>
 
+                {/* Cloud Technologies Layer */}
+                <div className="bg-cyan-50 p-4 rounded-lg border-l-4 border-cyan-500">
+                  <div className="flex items-center mb-2">
+                    <Cloud className="h-5 w-5 text-cyan-600 mr-2" />
+                    <h4 className="font-semibold text-cyan-900">Cloud Technologies & API</h4>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="bg-white p-2 rounded text-center text-xs">API Gateway</div>
+                    <div className="bg-white p-2 rounded text-center text-xs">Load Balancers</div>
+                  </div>
+                  <p className="text-xs text-cyan-700 mt-2">Modern, Resilient, High-Available, FedRAMP Certified</p>
+                </div>
+
                 {/* Data Layer */}
                 <div className="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
                   <div className="flex items-center mb-2">
@@ -266,7 +279,7 @@ const DocumentationTab = () => {
           {/* Key Technologies Footer */}
           <div className="mt-8 pt-6 border-t">
             <h4 className="text-center font-semibold text-gray-800 mb-4">Built on Proven Technologies</h4>
-            <div className="flex justify-center space-x-8 text-sm text-gray-600">
+            <div className="flex justify-center space-x-6 text-sm text-gray-600">
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
                 <span>React + TypeScript</span>
@@ -278,6 +291,10 @@ const DocumentationTab = () => {
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
                 <span>Cloud Native (CNCF)</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-cyan-500 rounded-full mr-2"></div>
+                <span>FedRAMP Certified</span>
               </div>
             </div>
           </div>
