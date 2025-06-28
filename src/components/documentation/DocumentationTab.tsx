@@ -1,0 +1,290 @@
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, Users, Shield, Settings, FileText, Database, Zap, CheckCircle, Clock, Globe } from "lucide-react";
+
+const DocumentationTab = () => {
+  return (
+    <div className="space-y-8">
+      {/* Disaster Configuration Workflow Graphic */}
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <CardTitle className="text-xl flex items-center">
+            <Settings className="h-6 w-6 mr-2" />
+            How Disaster Configuration Works
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Configuration Process Flow */}
+            <div className="lg:col-span-2">
+              <h3 className="text-lg font-semibold mb-6 text-center">Configuration to Deployment Process</h3>
+              
+              <div className="space-y-6">
+                {/* Step 1 */}
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">1</div>
+                  <div className="flex-1 bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-blue-900">Disaster Parameters</h4>
+                    <p className="text-sm text-blue-700">Define disaster type, affected areas, dates, and applicable laws</p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-gray-400 hidden md:block" />
+                </div>
+
+                {/* Step 2 */}
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">2</div>
+                  <div className="flex-1 bg-green-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-green-900">Assistance Programs</h4>
+                    <p className="text-sm text-green-700">Configure available programs, maximum awards, and eligibility rules</p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-gray-400 hidden md:block" />
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold">3</div>
+                  <div className="flex-1 bg-purple-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-purple-900">Special Provisions</h4>
+                    <p className="text-sm text-purple-700">Set expedited processing, inspection waivers, and validation rules</p>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-gray-400 hidden md:block" />
+                </div>
+
+                {/* Step 4 */}
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold">4</div>
+                  <div className="flex-1 bg-orange-50 p-4 rounded-lg">
+                    <h4 className="font-semibold text-orange-900">Auto-Generation</h4>
+                    <p className="text-sm text-orange-700">AI generates web forms, rules engine policies, and documentation</p>
+                  </div>
+                  <CheckCircle className="h-5 w-5 text-green-500 hidden md:block" />
+                </div>
+              </div>
+            </div>
+
+            {/* User Value Proposition */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-center">Value by User Type</h3>
+              
+              <div className="space-y-3">
+                <div className="bg-blue-100 p-4 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Users className="h-5 w-5 text-blue-600 mr-2" />
+                    <h4 className="font-semibold text-blue-900">Survivors</h4>
+                  </div>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• Faster application processing</li>
+                    <li>• Clear, tailored forms</li>
+                    <li>• Consistent eligibility decisions</li>
+                  </ul>
+                </div>
+
+                <div className="bg-green-100 p-4 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Shield className="h-5 w-5 text-green-600 mr-2" />
+                    <h4 className="font-semibold text-green-900">FEMA Staff</h4>
+                  </div>
+                  <ul className="text-sm text-green-800 space-y-1">
+                    <li>• Rapid disaster response setup</li>
+                    <li>• Automated policy compliance</li>
+                    <li>• Focus on decision-making</li>
+                  </ul>
+                </div>
+
+                <div className="bg-purple-100 p-4 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <Settings className="h-5 w-5 text-purple-600 mr-2" />
+                    <h4 className="font-semibold text-purple-900">Technologists</h4>
+                  </div>
+                  <ul className="text-sm text-purple-800 space-y-1">
+                    <li>• Scalable, modular architecture</li>
+                    <li>• Reduced manual coding</li>
+                    <li>• Maintainable rule systems</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* System Architecture Graphic */}
+      <Card className="overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+          <CardTitle className="text-xl flex items-center">
+            <Database className="h-6 w-6 mr-2" />
+            System Architecture & Access
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Architecture Diagram */}
+            <div>
+              <h3 className="text-lg font-semibold mb-6 text-center">Technical Architecture</h3>
+              
+              <div className="space-y-4">
+                {/* Frontend Layer */}
+                <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <div className="flex items-center mb-2">
+                    <Globe className="h-5 w-5 text-blue-600 mr-2" />
+                    <h4 className="font-semibold text-blue-900">Frontend Applications</h4>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="bg-white p-2 rounded text-center">Staff Dashboard</div>
+                    <div className="bg-white p-2 rounded text-center">Survivor Portal</div>
+                  </div>
+                  <p className="text-xs text-blue-700 mt-2">React, Mobile-Responsive, Role-Based Access</p>
+                </div>
+
+                {/* Processing Layer */}
+                <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <div className="flex items-center mb-2">
+                    <Zap className="h-5 w-5 text-green-600 mr-2" />
+                    <h4 className="font-semibold text-green-900">AI Processing Engine</h4>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    <div className="bg-white p-2 rounded text-center text-xs">Policy Parser</div>
+                    <div className="bg-white p-2 rounded text-center text-xs">Form Generator</div>
+                    <div className="bg-white p-2 rounded text-center text-xs">Rules Engine</div>
+                  </div>
+                  <p className="text-xs text-green-700 mt-2">LLM-Powered Configuration & Code Generation</p>
+                </div>
+
+                {/* Policy Layer */}
+                <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                  <div className="flex items-center mb-2">
+                    <FileText className="h-5 w-5 text-purple-600 mr-2" />
+                    <h4 className="font-semibold text-purple-900">Policy Framework</h4>
+                  </div>
+                  <div className="bg-white p-3 rounded">
+                    <div className="text-center text-sm font-medium">Open Policy Agent (Rego)</div>
+                    <p className="text-xs text-purple-700 mt-1">Declarative Policy Language, CNCF Project</p>
+                  </div>
+                </div>
+
+                {/* Data Layer */}
+                <div className="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+                  <div className="flex items-center mb-2">
+                    <Database className="h-5 w-5 text-orange-600 mr-2" />
+                    <h4 className="font-semibold text-orange-900">Data & Security</h4>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="bg-white p-2 rounded text-center text-xs">Secure Storage</div>
+                    <div className="bg-white p-2 rounded text-center text-xs">Audit Trails</div>
+                  </div>
+                  <p className="text-xs text-orange-700 mt-2">Encrypted, Compliant, Role-Based Access Control</p>
+                </div>
+              </div>
+            </div>
+
+            {/* User Experience Flow */}
+            <div>
+              <h3 className="text-lg font-semibold mb-6 text-center">User Experience Benefits</h3>
+              
+              <div className="space-y-6">
+                {/* Survivor Journey */}
+                <div className="bg-gradient-to-r from-blue-100 to-blue-50 p-4 rounded-lg">
+                  <div className="flex items-center mb-3">
+                    <Users className="h-6 w-6 text-blue-600 mr-2" />
+                    <h4 className="font-semibold text-blue-900">Survivor Journey</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span>Mobile-first application forms</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span>Real-time status updates</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                      <span>Consistent, fair processing</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center text-xs text-blue-700">
+                    <Clock className="h-3 w-3 mr-1" />
+                    Faster assistance delivery
+                  </div>
+                </div>
+
+                {/* FEMA Staff Experience */}
+                <div className="bg-gradient-to-r from-green-100 to-green-50 p-4 rounded-lg">
+                  <div className="flex items-center mb-3">
+                    <Shield className="h-6 w-6 text-green-600 mr-2" />
+                    <h4 className="font-semibold text-green-900">FEMA Staff Experience</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      <span>Hours vs. weeks for setup</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      <span>AI-assisted decision support</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      <span>Focus on complex cases</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center text-xs text-green-700">
+                    <Zap className="h-3 w-3 mr-1" />
+                    Rapid disaster response
+                  </div>
+                </div>
+
+                {/* Technologist Benefits */}
+                <div className="bg-gradient-to-r from-purple-100 to-purple-50 p-4 rounded-lg">
+                  <div className="flex items-center mb-3">
+                    <Settings className="h-6 w-6 text-purple-600 mr-2" />
+                    <h4 className="font-semibold text-purple-900">Technologist Benefits</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      <span>Modular, reusable architecture</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      <span>Battle-tested Rego framework</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      <span>Automated code generation</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center text-xs text-purple-700">
+                    <Database className="h-3 w-3 mr-1" />
+                    Scalable, maintainable systems
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Key Technologies Footer */}
+          <div className="mt-8 pt-6 border-t">
+            <h4 className="text-center font-semibold text-gray-800 mb-4">Built on Proven Technologies</h4>
+            <div className="flex justify-center space-x-8 text-sm text-gray-600">
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                <span>React + TypeScript</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                <span>Open Policy Agent</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                <span>Cloud Native (CNCF)</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default DocumentationTab;

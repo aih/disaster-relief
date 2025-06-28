@@ -1,8 +1,9 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Shield, Settings, FileText, Brain, Zap, AlertTriangle, Smartphone, Lock, Copy, Code } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Shield, Settings, FileText, Brain, Zap, AlertTriangle, Smartphone, Lock, Copy, Code, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import DocumentationTab from "@/components/documentation/DocumentationTab";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -72,145 +73,115 @@ const Index = () => {
           </div>
         </div>
 
-        {/* About Section */}
+        {/* Documentation and Information Tabs */}
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-6xl mx-auto mb-12">
+          <Tabs defaultValue="overview" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="overview" className="flex items-center space-x-2">
+                <FileText className="h-4 w-4" />
+                <span>System Overview</span>
+              </TabsTrigger>
+              <TabsTrigger value="documentation" className="flex items-center space-x-2">
+                <BookOpen className="h-4 w-4" />
+                <span>Technical Documentation</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="overview">
+              <div>
+                <div className="text-center mb-8">
+                  <FileText className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="text-3xl font-bold text-gray-800 mb-2">How Disaster Configuration Works</h3>
+                  <p className="text-gray-600">From plain language policy to automated assistance programs</p>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-8 mb-8">
+                  <div>
+                    <h4 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                      <Settings className="h-5 w-5 text-blue-600 mr-2" />
+                      Configuration Process
+                    </h4>
+                    <div className="space-y-3 text-gray-600">
+                      <div className="border-l-4 border-blue-500 pl-4">
+                        <p className="font-medium">1. Disaster Parameters</p>
+                        <p className="text-sm">Define disaster type, affected areas, dates, and applicable laws</p>
+                      </div>
+                      <div className="border-l-4 border-green-500 pl-4">
+                        <p className="font-medium">2. Assistance Programs</p>
+                        <p className="text-sm">Configure available programs, maximum awards, and eligibility rules</p>
+                      </div>
+                      <div className="border-l-4 border-purple-500 pl-4">
+                        <p className="font-medium">3. Special Provisions</p>
+                        <p className="text-sm">Set expedited processing, inspection waivers, and validation rules</p>
+                      </div>
+                      <div className="border-l-4 border-orange-500 pl-4">
+                        <p className="font-medium">4. Policy Generation</p>
+                        <p className="text-sm">Automatically generate rules engine policy files and web application forms</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                      <FileText className="h-5 w-5 text-green-600 mr-2" />
+                      Generated Outputs
+                    </h4>
+                    <div className="space-y-3 text-gray-600">
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <p className="font-medium text-green-700">Draft Web Application Form</p>
+                        <p className="text-sm">Automatically generates survivor-facing application forms with appropriate fields, validation, and guidance based on disaster configuration</p>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <p className="font-medium text-blue-700">Deterministic Rules Engine</p>
+                        <p className="text-sm">Creates a rules-based eligibility engine that evaluates applications against configured criteria with human review for all final determinations</p>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded-lg">
+                        <p className="font-medium text-purple-700">Policy Documentation</p>
+                        <p className="text-sm">Generates comprehensive policy documentation with legal references, eligibility matrices, and operational procedures</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="documentation">
+              <DocumentationTab />
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* AI-Powered Assistance Section */}
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-6xl mx-auto mb-12">
           <div className="text-center mb-8">
-            <FileText className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-            <h3 className="text-3xl font-bold text-gray-800 mb-2">How Disaster Configuration Works</h3>
-            <p className="text-gray-600">From plain language policy to automated assistance programs</p>
+            <Brain className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
+            <h3 className="text-3xl font-bold text-gray-800 mb-2">AI-Powered Assistance</h3>
+            <p className="text-gray-600">AI models assist with setup and flagging while humans maintain control over all eligibility decisions</p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            <div>
-              <h4 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                <Settings className="h-5 w-5 text-blue-600 mr-2" />
-                Configuration Process
-              </h4>
-              <div className="space-y-3 text-gray-600">
-                <div className="border-l-4 border-blue-500 pl-4">
-                  <p className="font-medium">1. Disaster Parameters</p>
-                  <p className="text-sm">Define disaster type, affected areas, dates, and applicable laws</p>
-                </div>
-                <div className="border-l-4 border-green-500 pl-4">
-                  <p className="font-medium">2. Assistance Programs</p>
-                  <p className="text-sm">Configure available programs, maximum awards, and eligibility rules</p>
-                </div>
-                <div className="border-l-4 border-purple-500 pl-4">
-                  <p className="font-medium">3. Special Provisions</p>
-                  <p className="text-sm">Set expedited processing, inspection waivers, and validation rules</p>
-                </div>
-                <div className="border-l-4 border-orange-500 pl-4">
-                  <p className="font-medium">4. Policy Generation</p>
-                  <p className="text-sm">Automatically generate rules engine policy files and web application forms</p>
-                </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="bg-indigo-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <FileText className="h-8 w-8 text-indigo-600" />
               </div>
+              <h5 className="font-semibold text-gray-800 mb-2">Configuration Acceleration</h5>
+              <p className="text-gray-600 text-sm">AI converts plain language disaster policies into structured configuration parameters, extracting eligibility criteria and program details to speed up setup</p>
             </div>
-
-            <div>
-              <h4 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                <FileText className="h-5 w-5 text-green-600 mr-2" />
-                Generated Outputs
-              </h4>
-              <div className="space-y-3 text-gray-600">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="font-medium text-green-700">Draft Web Application Form</p>
-                  <p className="text-sm">Automatically generates survivor-facing application forms with appropriate fields, validation, and guidance based on disaster configuration</p>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="font-medium text-blue-700">Deterministic Rules Engine</p>
-                  <p className="text-sm">Creates a rules-based eligibility engine that evaluates applications against configured criteria with human review for all final determinations</p>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="font-medium text-purple-700">Policy Documentation</p>
-                  <p className="text-sm">Generates comprehensive policy documentation with legal references, eligibility matrices, and operational procedures</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t pt-8">
-            <h4 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center justify-center">
-              <Brain className="h-6 w-6 text-indigo-600 mr-2" />
-              AI-Powered Assistance
-            </h4>
             
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="bg-indigo-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <FileText className="h-8 w-8 text-indigo-600" />
-                </div>
-                <h5 className="font-semibold text-gray-800 mb-2">Configuration Acceleration</h5>
-                <p className="text-gray-600 text-sm">AI converts plain language disaster policies into structured configuration parameters, extracting eligibility criteria and program details to speed up setup</p>
+            <div className="text-center">
+              <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <Zap className="h-8 w-8 text-green-600" />
               </div>
-              
-              <div className="text-center">
-                <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <Zap className="h-8 w-8 text-green-600" />
-                </div>
-                <h5 className="font-semibold text-gray-800 mb-2">Processing Efficiency</h5>
-                <p className="text-gray-600 text-sm">AI assists in streamlining application processing and documentation review, while all final eligibility determinations remain with human reviewers</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="bg-red-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                  <AlertTriangle className="h-8 w-8 text-red-600" />
-                </div>
-                <h5 className="font-semibold text-gray-800 mb-2">Issue Flagging</h5>
-                <p className="text-gray-600 text-sm">AI models detect anomalies and flag potential issues in applications for human investigation, ensuring program integrity</p>
-              </div>
+              <h5 className="font-semibold text-gray-800 mb-2">Processing Efficiency</h5>
+              <p className="text-gray-600 text-sm">AI assists in streamlining application processing and documentation review, while all final eligibility determinations remain with human reviewers</p>
             </div>
-          </div>
-
-          <div className="mt-8 p-6 bg-blue-50 rounded-lg">
-            <h5 className="font-semibold text-blue-900 mb-3">System Architecture & Access</h5>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <div className="space-y-4 text-sm text-blue-800">
-                  <div>
-                    <p className="font-medium flex items-center">
-                      <Smartphone className="h-4 w-4 mr-2" />
-                      Universal Access
-                    </p>
-                    <p>Application and status data accessible on mobile devices and computers, ensuring survivors can apply and check status anywhere</p>
-                  </div>
-                  <div>
-                    <p className="font-medium flex items-center">
-                      <Lock className="h-4 w-4 mr-2" />
-                      Secure Authentication
-                    </p>
-                    <p>Role-based access controls ensure only authorized FEMA administrators can configure disaster parameters and modify system settings</p>
-                  </div>
-                  <div>
-                    <p className="font-medium flex items-center">
-                      <Code className="h-4 w-4 mr-2" />
-                      Rego Policy Engine
-                    </p>
-                    <p>Uses Open Policy Agent's Rego domain-specific language, a mature framework originally developed by Styra in 2016 and now part of the Cloud Native Computing Foundation (CNCF). Rego provides a declarative approach to policy authoring with proven scalability across cloud-native ecosystems.</p>
-                  </div>
-                </div>
+            
+            <div className="text-center">
+              <div className="bg-red-100 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <AlertTriangle className="h-8 w-8 text-red-600" />
               </div>
-              <div>
-                <div className="space-y-4 text-sm text-blue-800">
-                  <div>
-                    <p className="font-medium flex items-center">
-                      <Copy className="h-4 w-4 mr-2" />
-                      Modular Configurations
-                    </p>
-                    <p>Disaster configurations are modular and reusable - copy existing configurations to new disasters and modify as needed</p>
-                  </div>
-                  <div>
-                    <p className="font-medium">Deterministic Processing</p>
-                    <p>All eligibility determinations made by rules engine with mandatory human review - AI assists but never makes final decisions</p>
-                  </div>
-                  <div>
-                    <p className="font-medium flex items-center">
-                      <Shield className="h-4 w-4 mr-2" />
-                      Battle-Tested Rules Framework
-                    </p>
-                    <p>Leverages Open Policy Agent's proven track record in enterprise environments including Google, Netflix, and major government agencies. The declarative nature of Rego eliminates common programming errors while providing clear audit trails for compliance and legal review.</p>
-                  </div>
-                </div>
-              </div>
+              <h5 className="font-semibold text-gray-800 mb-2">Issue Flagging</h5>
+              <p className="text-gray-600 text-sm">AI models detect anomalies and flag potential issues in applications for human investigation, ensuring program integrity</p>
             </div>
           </div>
         </div>
