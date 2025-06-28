@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -84,7 +83,7 @@ const Index = () => {
               </TabsTrigger>
               <TabsTrigger value="documentation" className="flex items-center space-x-2">
                 <BookOpen className="h-4 w-4" />
-                <span>System Architecture</span>
+                <span>Technical Documentation</span>
               </TabsTrigger>
             </TabsList>
 
