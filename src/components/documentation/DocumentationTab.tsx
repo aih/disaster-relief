@@ -212,7 +212,7 @@ const DocumentationTab = () => {
               </div>
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
-                <span>Cloud Native (CNCF)</span>
+                <span>Cloud Native</span>
               </div>
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-cyan-500 rounded-full mr-2"></div>
