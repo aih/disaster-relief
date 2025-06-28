@@ -1,6 +1,5 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Users, Shield, Settings, FileText, Database, Zap, CheckCircle, Clock, Globe, Cloud } from "lucide-react";
+import { ArrowRight, Users, Shield, Settings, FileText, Database, Zap, CheckCircle, Clock, Globe, Cloud, MapPin } from "lucide-react";
 
 const DocumentationTab = () => {
   return (
@@ -117,7 +116,7 @@ const DocumentationTab = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Architecture Diagram */}
             <div>
               <h3 className="text-lg font-semibold mb-6 text-center">Technical Architecture</h3>
@@ -270,6 +269,91 @@ const DocumentationTab = () => {
                   <div className="mt-3 flex items-center text-xs text-purple-700">
                     <Database className="h-3 w-3 mr-1" />
                     Scalable, maintainable systems
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* State and Local Staff Benefits */}
+            <div>
+              <h3 className="text-lg font-semibold mb-6 text-center">State & Local Staff Benefits</h3>
+              
+              <div className="space-y-6">
+                {/* Coordination Benefits */}
+                <div className="bg-gradient-to-r from-teal-100 to-teal-50 p-4 rounded-lg">
+                  <div className="flex items-center mb-3">
+                    <MapPin className="h-6 w-6 text-teal-600 mr-2" />
+                    <h4 className="font-semibold text-teal-900">Enhanced Coordination</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-teal-500 rounded-full mr-3"></div>
+                      <span>Real-time visibility into federal programs</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-teal-500 rounded-full mr-3"></div>
+                      <span>Standardized application processes</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-teal-500 rounded-full mr-3"></div>
+                      <span>Reduced duplication of efforts</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center text-xs text-teal-700">
+                    <Shield className="h-3 w-3 mr-1" />
+                    Seamless federal-state coordination
+                  </div>
+                </div>
+
+                {/* Resource Efficiency */}
+                <div className="bg-gradient-to-r from-amber-100 to-amber-50 p-4 rounded-lg">
+                  <div className="flex items-center mb-3">
+                    <Settings className="h-6 w-6 text-amber-600 mr-2" />
+                    <h4 className="font-semibold text-amber-900">Resource Efficiency</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-amber-500 rounded-full mr-3"></div>
+                      <span>Shared technology infrastructure</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-amber-500 rounded-full mr-3"></div>
+                      <span>Reduced IT development costs</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-amber-500 rounded-full mr-3"></div>
+                      <span>Access to proven frameworks</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center text-xs text-amber-700">
+                    <Zap className="h-3 w-3 mr-1" />
+                    Cost-effective solution adoption
+                  </div>
+                </div>
+
+                {/* Capability Enhancement */}
+                <div className="bg-gradient-to-r from-rose-100 to-rose-50 p-4 rounded-lg">
+                  <div className="flex items-center mb-3">
+                    <Users className="h-6 w-6 text-rose-600 mr-2" />
+                    <h4 className="font-semibold text-rose-900">Capability Enhancement</h4>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-rose-500 rounded-full mr-3"></div>
+                      <span>Advanced eligibility processing</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-rose-500 rounded-full mr-3"></div>
+                      <span>AI-assisted decision support</span>
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-rose-500 rounded-full mr-3"></div>
+                      <span>Consistent policy application</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center text-xs text-rose-700">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Enhanced service delivery
                   </div>
                 </div>
               </div>
