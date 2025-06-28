@@ -385,14 +385,19 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
   const handleProgramTypeChange = (index: number, programType: string) => {
     if (programType in predefinedAssistanceTypes) {
       const preset = predefinedAssistanceTypes[programType as keyof typeof predefinedAssistanceTypes];
-      updateProgram(index, 'programType', programType);
-      updateProgram(index, 'name', preset.name);
-      updateProgram(index, 'definition', preset.definition);
-      updateProgram(index, 'subjectToCap', preset.subjectToCap);
-      updateProgram(index, 'rules', [...preset.defaultRules]);
-      updateProgram(index, 'maxAward', preset.maxAward);
-      updateProgram(index, 'isExpedited', preset.isExpedited);
-      updateProgram(index, 'inspectionWaived', preset.inspectionWaived);
+      const updated = [...assistancePrograms];
+      updated[index] = {
+        ...updated[index],
+        programType: programType,
+        name: preset.name,
+        definition: preset.definition,
+        subjectToCap: preset.subjectToCap,
+        rules: [...preset.defaultRules],
+        maxAward: preset.maxAward,
+        isExpedited: preset.isExpedited,
+        inspectionWaived: preset.inspectionWaived
+      };
+      setAssistancePrograms(updated);
     } else {
       updateProgram(index, 'programType', programType);
     }
@@ -617,7 +622,10 @@ const ConfigureDisaster = ({ onSave }: ConfigureDisasterProps) => {
                         <div className="grid md:grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor={`program-type-${index}`}>Program Type</Label>
-                            <Select value={program.programType} onValueChange={(value) => handleProgramTypeChange(index, value)}>
+                            <Select 
+                              value={program.programType} 
+                              onValueChange={(value) => handleProgramTypeChange(index, value)}
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select program type or create custom" />
                               </SelectTrigger>
