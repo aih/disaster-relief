@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Settings, FileText, Brain, Zap, AlertTriangle, Smartphone, Lock, Copy, Code, BookOpen } from "lucide-react";
+import { Shield, Settings, FileText, Brain, Zap, AlertTriangle, Smartphone, Lock, Copy, Code, BookOpen, Video } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DocumentationTab from "@/components/documentation/DocumentationTab";
 
@@ -94,6 +94,24 @@ const Index = () => {
                   <FileText className="h-12 w-12 text-blue-600 mx-auto mb-4" />
                   <h3 className="text-3xl font-bold text-gray-800 mb-2">How Disaster Configuration Works</h3>
                   <p className="text-gray-600">From plain language policy to automated assistance programs</p>
+                  
+                  {/* Demo Video Link */}
+                  <div className="mt-6">
+                    <a 
+                      href="https://app.screencast.com/pu5I7rMOHvWjU" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
+                    >
+                      <Video className="h-5 w-5" />
+                      <span>Watch Demo Video</span>
+                    </a>
+                    <p className="text-sm text-gray-500 mt-2">
+                      <span className="inline-flex items-center">
+                        This link opens in a new window (external site)
+                      </span>
+                    </p>
+                  </div>
                 </div>
                 
                 <div className="grid md:grid-cols-2 gap-8 mb-8">
