@@ -98,7 +98,7 @@ const Index = () => {
                   {/* Demo Video Link */}
                   <div className="mt-6">
                     <a 
-                      href="https://app.screencast.com/pu5I7rMOHvWjU" 
+                      href="https://app.screencast.com/xQlTSKozymAH8" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
