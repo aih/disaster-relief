@@ -95,20 +95,22 @@ const Index = () => {
                   <h3 className="text-3xl font-bold text-gray-800 mb-2">How Disaster Configuration Works</h3>
                   <p className="text-gray-600">From plain language policy to automated assistance programs</p>
                   
-                  {/* Demo Video Button */}
-                  <div className="mt-4">
+                  {/* Demo Video Link */}
+                  <div className="mt-6">
                     <a 
                       href="https://app.screencast.com/pu5I7rMOHvWjU" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition-colors group"
-                      title="Watch demo video (opens in new window)"
+                      className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
                     >
-                      <div className="p-2 bg-blue-100 rounded-full group-hover:bg-blue-200 transition-colors">
-                        <Video className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium">Watch Demo</span>
+                      <Video className="h-5 w-5" />
+                      <span>Watch Demo Video</span>
                     </a>
+                    <p className="text-sm text-gray-500 mt-2">
+                      <span className="inline-flex items-center">
+                        This link opens in a new window (external site)
+                      </span>
+                    </p>
                   </div>
                 </div>
                 
