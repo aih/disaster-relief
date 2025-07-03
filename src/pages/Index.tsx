@@ -95,22 +95,22 @@ const Index = () => {
                   <h3 className="text-3xl font-bold text-gray-800 mb-2">How Disaster Configuration Works</h3>
                   <p className="text-gray-600">From plain language policy to automated assistance programs</p>
                   
-                  {/* Demo Video Link */}
+                  {/* Demo Video */}
                   <div className="mt-6">
-                    <a 
-                      href="https://app.screencast.com/pu5I7rMOHvWjU" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors"
-                    >
-                      <Video className="h-5 w-5" />
-                      <span>Watch Demo Video</span>
-                    </a>
-                    <p className="text-sm text-gray-500 mt-2">
-                      <span className="inline-flex items-center">
-                        This link opens in a new window (external site)
-                      </span>
-                    </p>
+                    <div className="bg-gray-900 rounded-lg p-4 max-w-4xl mx-auto">
+                      <div className="flex items-center space-x-2 mb-3">
+                        <Video className="h-5 w-5 text-blue-400" />
+                        <h4 className="text-white font-medium">Demo Video: Disaster Configuration Walkthrough</h4>
+                      </div>
+                      <video 
+                        controls 
+                        className="w-full rounded-lg"
+                        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23374151' viewBox='0 0 24 24'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E"
+                      >
+                        <source src="/demo-video.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
                   </div>
                 </div>
                 
